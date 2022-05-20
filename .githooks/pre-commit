@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# master/developブランチへのコミットを禁止
+
+branch="$(git symbolic-ref HEAD 2>/dev/null)" || \
+       "$(git describe --contains --all HEAD)"
+
+if [ "${branch##refs/heads/}" = "main" ] || [ "${branch##refs/heads/}" = "master" ] || [ "${branch##refs/heads/}" = "develop" ]; then
+    printf "\e[31m%s\n\e[m" "[Error]"
+    echo "このブランチにはコミットできないよ"
+    echo "別のブランチにコミットしてね"
+    exit 1
+fi
+
