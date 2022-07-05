@@ -1,0 +1,31 @@
+name: Build Vue App
+
+on:
+  push:
+    branches: [ "develop" ]
+  pull_request:
+    branches: [ "develop" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Building docker
+        run: docker-compose up -d --build
+
+      - name: Install npm
+        run: |
+          mkdir app/frontend/node_modules
+          chmod 777 -R app/frontend/node_modules
+          chmod 777 app/frontend/package-lock.json
+          docker container exec -i app bash -c "cd frontend && npm install"
+
+      - name: Building app
+        run: |
+          mkdir app/frontend/dist
+          chmod 777 -R app/frontend/dist
+          docker container exec -i app bash -c "cd frontend && npm run build"
