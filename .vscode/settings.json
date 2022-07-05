@@ -1,0 +1,17 @@
+{
+  "eslint.workingDirectories": [
+      {"mode": "auto"}
+  ],
+  "workbench.colorCustomizations": {
+  "[Default Dark+]": {}
+  },
+  "workbench.colorCustomizations": {
+    "titleBar.activeBackground": "#42b983", // タイトルバーの背景色
+    "titleBar.activeForeground": "#fff", // タイトルバーの文字色
+    "editor.background": "#261e00", // エディタの背景色
+  },
+  "cSpell.words": [
+    "Avenir",
+    "tailwindcss"
+  ]
+}
