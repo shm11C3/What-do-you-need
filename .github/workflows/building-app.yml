@@ -20,7 +20,7 @@ jobs:
         run: docker-compose up -d --build
 
       - name: Install npm
-        run: docker container exec --tty -i app bash -c "cd frontend && npm install"
-        
+        run: docker container exec -i app bash -c "cd frontend && npm install"
+
       - name: Building app
-        run: docker container exec --tty -i app bash -c "cd frontend && npm run build"
+        run: docker container exec  -i app bash -c "cd frontend && npm run build"
