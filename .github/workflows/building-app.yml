@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Building docker
-        run: docker build . --file infra/docker/vue/Dockerfile --tag my-image-name:$(date +%s)
+        run: docker build . --file infra/docker/vue/Dockerfile --tag app:$(date +%s)
 
       - name: Install npm
         run: docker container exec -it app bash -c "cd frontend && npm install"
