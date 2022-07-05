@@ -16,11 +16,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Build docker-compose
-        run: docker-compose up -d --build
+      - name: Building docker
+        run: docker build . --file infra/docker/vue/Dockerfile --tag my-image-name:$(date +%s)
 
       - name: Install npm
         run: docker container exec -it app bash -c "cd frontend && npm install"
         
-      - name: Build app
+      - name: Building app
         run: docker container exec -it app bash -c "cd frontend && npm run build"
