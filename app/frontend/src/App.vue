@@ -3,7 +3,8 @@
     <router-link to="/">Home</router-link> |
     <router-link to="/about">About</router-link>
   </nav>
-  <router-view />
+  <div class="text-5xl text-blue-600 text-bold">tailwind css</div>
+  <router-view></router-view>
 </template>
 
 <style lang="scss">
