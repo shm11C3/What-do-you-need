@@ -1,31 +1,23 @@
 <template>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </nav>
-  <div class="text-5xl text-blue-600 text-bold">tailwind css</div>
-  <router-view></router-view>
+  <div>
+    <header>
+      <HeaderNav />
+    </header>
+    <main>
+      <div id="app">
+        <router-view />
+      </div>
+    </main>
+  </div>
 </template>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
+import HeaderNav from "./components/HeaderNav.vue";
 
-nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
-}
-</style>
+export default {
+  components: {
+    HeaderNav, //読み込む際はここにも追記必要
+  },
+  name: "App",
+};
+</script>
