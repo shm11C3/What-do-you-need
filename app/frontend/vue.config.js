@@ -5,6 +5,6 @@ module.exports = defineConfig({
     https: true,
     host: "0.0.0.0",
     port: "8083",
-    allowedHosts: "strn.home",
+    allowedHosts: process.env.VUE_APP_HOSTNAME,
   },
 });
