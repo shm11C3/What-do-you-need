@@ -1,6 +1,8 @@
 <template>
   <div class="header">
-    <nav class="flex items-center justify-between flex-wrap bg-blue-500 p-6">
+    <nav
+      :class="`flex items-center justify-between flex-wrap p-6 bg-${cssSetting.main}`"
+    >
       <div class="flex items-center flex-shrink-0 text-white mr-6">
         <router-link to="/" class="font-semibold text-xl tracking-tight"
           >What do you want?</router-link
@@ -54,6 +56,7 @@
   </div>
 </template>
 <script>
+import { setting } from "../js/setting/style";
 import { useAuth0 } from "@auth0/auth0-vue";
 
 export default {
@@ -64,6 +67,7 @@ export default {
       login() {
         auth0.loginWithRedirect();
       },
+      cssSetting: setting,
       user: auth0.user,
       isAuthenticated: auth0.isAuthenticated,
       userIsLoading: auth0.isLoading,
