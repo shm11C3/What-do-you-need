@@ -4,7 +4,23 @@ const auth = {
     email_verified: false,
     idTokenClaims: null, // idTokenは`vuex-persistedstate`には保存しない
   },
-  getters: {},
+  getters: {
+    isAuthenticated(state) {
+      return state.isAuthenticated;
+    },
+    email_verified(state) {
+      return state.email_verified;
+    },
+    idTokenClaims(state) {
+      return state.idTokenClaims;
+    },
+    idToken(state) {
+      return state.idTokenClaims.__raw;
+    },
+    idTokenExpiration(state) {
+      return state.idTokenClaims.exp;
+    },
+  },
   mutations: {
     isAuthenticated(state, e) {
       state.isAuthenticated = e;

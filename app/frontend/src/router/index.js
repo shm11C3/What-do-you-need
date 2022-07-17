@@ -34,6 +34,11 @@ const routes = [
     name: "afterLogin",
     component: () => import("../views/auth/AfterLogin.vue"),
   },
+  {
+    path: "/user/redirect/logout",
+    name: "afterLogout",
+    component: () => import("../views/auth/AfterLogout.vue"),
+  },
 ];
 
 const router = createRouter({

@@ -1,44 +1,59 @@
 <!--ローディング時のUIコンポーネントを追加する-->
 <script>
 import { useAuth0 } from "@auth0/auth0-vue";
+import { onMounted } from "vue";
+import { useRouter } from "vue-router";
 
 export default {
   name: "App",
   setup() {
     const auth0 = useAuth0();
+    const router = useRouter();
+
+    let isLoading = auth0.isLoading;
+    let isAuthenticated = auth0.isAuthenticated;
+
+    onMounted(() => {
+      if (!isLoading.value && !isAuthenticated.value) {
+        router.push("/");
+      }
+    });
 
     return {
-      login() {
-        auth0.loginWithRedirect({
-          redirect_uri: process.env.VUE_APP_URL + "/user/redirect/",
-        });
-      },
+      isLoading: isLoading,
       auth0User: auth0.user,
-      isAuthenticated: auth0.isAuthenticated,
+      isAuthenticated: isAuthenticated,
       idTokenClaims: auth0.idTokenClaims,
     };
   },
   watch: {
-    isAuthenticated: function (e) {
-      this.$store.dispatch("setIsAuthenticated", e);
-      if (!e) {
-        this.$store.dispatch("logout"); // vuexの認証情報を削除する
-        this.login();
+    isLoading: function () {
+      this.storeAuthenticate();
+
+      // 認証のチェック
+      if (
+        this.$store.getters.isAuthenticated &&
+        this.$store.getters.email_verified
+      ) {
+        this.$router.push("/error/email-verify");
       }
+
+      this.$router.push("/");
     },
-    auth0User: function (e) {
+  },
+  methods: {
+    // Vuexに認証の状態を保存
+    storeAuthenticate() {
       let email_verified = false;
+      let idTokenClaims = null;
+
+      this.$store.dispatch("setIsAuthenticated", this.isAuthenticated);
       if (this.isAuthenticated) {
-        email_verified = e.email_verified;
+        email_verified = this.auth0User.email_verified;
+        idTokenClaims = this.idTokenClaims;
       }
 
       this.$store.dispatch("setEmail_verified", email_verified);
-    },
-    idTokenClaims: function (e) {
-      let idTokenClaims = null;
-      if (e) {
-        idTokenClaims = e;
-      }
       this.$store.dispatch("setIdTokenClaims", idTokenClaims);
     },
   },
