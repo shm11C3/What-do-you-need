@@ -1,9 +1,17 @@
 import { createStore } from "vuex";
+import createPersistedState from "vuex-persistedstate";
+import auth from "./auth.js";
 
 export default createStore({
-  state: {},
-  getters: {},
-  mutations: {},
-  actions: {},
-  modules: {},
+  modules: {
+    auth,
+  },
+
+  plugins: [
+    createPersistedState({
+      key: "vuex",
+      paths: ["auth.isAuthenticated", "auth.email_verified"],
+      storage: window.window.localStorage,
+    }),
+  ],
 });
