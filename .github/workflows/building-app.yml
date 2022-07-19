@@ -29,3 +29,11 @@ jobs:
           mkdir app/frontend/dist
           chmod 777 -R app/frontend/dist
           docker container exec -i app bash -c "cd frontend && npm run build"
+          docker container exec -i app bash -c "cp .env.example .env"
+          docker container exec -i app bash "sed -i -e 's/VUE_APP_NAME=/VUE_APP_NAME=${{ secrets.VUE_APP_NAME }}/' .env"
+          docker container exec -i app bash "sed -i -e 's/VUE_APP_ROOT_API=/VUE_APP_ROOT_API=${{ secrets.VUE_APP_ROOT_API }}/' .env"
+          docker container exec -i app bash "sed -i -e 's/VUE_APP_HOSTNAME=/VUE_APP_HOSTNAME=${{ secrets.VUE_APP_HOSTNAME }}/' .env"
+          docker container exec -i app bash "sed -i -e 's/VUE_APP_URL=/VUE_APP_URL=${{ secrets.VUE_APP_URL }}/' .env"
+          docker container exec -i app bash "sed -i -e 's/VUE_APP_REDIRECT_URL=/VUE_APP_REDIRECT_URL=${{ secrets.VUE_APP_REDIRECT_URL }}/' .env"
+          docker container exec -i app bash "sed -i -e 's/VUE_APP_AUTH0_DOMAIN=/VUE_APP_AUTH0_DOMAIN=${{ secrets.VUE_APP_AUTH0_DOMAIN }}/' .env"
+          docker container exec -i app bash "sed -i -e 's/VUE_APP_AUTH0_CLIENT_ID=/VUE_APP_AUTH0_CLIENT_ID=${{ secrets.VUE_APP_AUTH0_CLIENT_ID }}/' .env"
