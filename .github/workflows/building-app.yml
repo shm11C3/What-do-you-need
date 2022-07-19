@@ -20,7 +20,6 @@ jobs:
       - name: Install npm
         run: |
           mkdir app/frontend/node_modules
-          sudo chown -R runner:docker app
           chmod 777 -R app/frontend/node_modules
           chmod 777 app/frontend/package-lock.json
           docker container exec -i app bash -c "cd frontend && npm install"
@@ -31,10 +30,10 @@ jobs:
           chmod 777 -R app/frontend/dist
           docker container exec -i app bash -c "cd frontend && npm run build"
           docker container exec -i app bash -c "cp frontend/.env.example frontend/.env"
-          docker container exec -i app bash -c "sed -i -e 's/VUE_APP_NAME=/VUE_APP_NAME=${{ secrets.VUE_APP_NAME }}/' frontend/.env"
-          docker container exec -i app bash -c "sed -i -e 's/VUE_APP_ROOT_API=/VUE_APP_ROOT_API=${{ secrets.VUE_APP_ROOT_API }}/' frontend/.env"
-          docker container exec -i app bash -c "sed -i -e 's/VUE_APP_HOSTNAME=/VUE_APP_HOSTNAME=${{ secrets.VUE_APP_HOSTNAME }}/' frontend/.env"
-          docker container exec -i app bash -c "sed -i -e 's/VUE_APP_URL=/VUE_APP_URL=${{ secrets.VUE_APP_URL }}/' frontend/.env"
-          docker container exec -i app bash -c "sed -i -e 's/VUE_APP_REDIRECT_URL=/VUE_APP_REDIRECT_URL=${{ secrets.VUE_APP_REDIRECT_URL }}/' frontend/.env"
-          docker container exec -i app bash -c "sed -i -e 's/VUE_APP_AUTH0_DOMAIN=/VUE_APP_AUTH0_DOMAIN=${{ secrets.VUE_APP_AUTH0_DOMAIN }}/' frontend/.env"
-          docker container exec -i app bash -c "sed -i -e 's/VUE_APP_AUTH0_CLIENT_ID=/VUE_APP_AUTH0_CLIENT_ID=${{ secrets.VUE_APP_AUTH0_CLIENT_ID }}/' frontend/.env"
+          sudo docker container exec -i app bash -c "sed -i -e 's/VUE_APP_NAME=/VUE_APP_NAME=${{ secrets.VUE_APP_NAME }}/' frontend/.env"
+          sudo docker container exec -i app bash -c "sed -i -e 's/VUE_APP_ROOT_API=/VUE_APP_ROOT_API=${{ secrets.VUE_APP_ROOT_API }}/' frontend/.env"
+          sudo docker container exec -i app bash -c "sed -i -e 's/VUE_APP_HOSTNAME=/VUE_APP_HOSTNAME=${{ secrets.VUE_APP_HOSTNAME }}/' frontend/.env"
+          sudo docker container exec -i app bash -c "sed -i -e 's/VUE_APP_URL=/VUE_APP_URL=${{ secrets.VUE_APP_URL }}/' frontend/.env"
+          sudo docker container exec -i app bash -c "sed -i -e 's/VUE_APP_REDIRECT_URL=/VUE_APP_REDIRECT_URL=${{ secrets.VUE_APP_REDIRECT_URL }}/' frontend/.env"
+          sudo docker container exec -i app bash -c "sed -i -e 's/VUE_APP_AUTH0_DOMAIN=/VUE_APP_AUTH0_DOMAIN=${{ secrets.VUE_APP_AUTH0_DOMAIN }}/' frontend/.env"
+          sudo docker container exec -i app bash -c "sed -i -e 's/VUE_APP_AUTH0_CLIENT_ID=/VUE_APP_AUTH0_CLIENT_ID=${{ secrets.VUE_APP_AUTH0_CLIENT_ID }}/' frontend/.env"
