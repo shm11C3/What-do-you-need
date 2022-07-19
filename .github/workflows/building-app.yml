@@ -20,8 +20,7 @@ jobs:
       - name: Install npm
         run: |
           mkdir app/frontend/node_modules
-          chmod 777 -R app/frontend/node_modules
-          chmod 777 app/frontend/package-lock.json
+          sudo chown -R runner:docker app
           docker container exec -i app bash -c "cd frontend && npm install"
 
       - name: Building app
