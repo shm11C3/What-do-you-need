@@ -30,7 +30,12 @@ const routes = [
       import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
   },
   {
-    path: "/user/redirect",
+    path: "/user/profile",
+    name: "userProfile",
+    component: () => import("../views/auth/ProfileView.vue"),
+  },
+  {
+    path: "/user/redirect/login",
     name: "afterLogin",
     component: () => import("../views/auth/AfterLogin.vue"),
   },
@@ -62,10 +67,14 @@ router.beforeEach((to, from, next) => {
     return;
   }
 
+  if (to.path.includes("/user/redirect/login") && isAuthenticated) {
+    return false;
+  }
+
   // ログインユーザ用パス
   if (authRequired && !isAuthenticated) {
     // todo `to`の値をvuexで保存し、リダイレクト先として後で呼び出す
-    next("/user/redirect");
+    next("/login");
   } else {
     next();
   }

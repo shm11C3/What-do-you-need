@@ -1,8 +1,6 @@
 <template>
   <div class="header">
-    <nav
-      :class="`flex items-center justify-between flex-wrap p-6 bg-${cssSetting.main}`"
-    >
+    <nav class="flex items-center justify-between flex-wrap p-6 bg-blue-500">
       <div class="flex items-center flex-shrink-0 text-white mr-6">
         <router-link to="/" class="font-semibold text-xl tracking-tight"
           >What do you want?</router-link
@@ -65,7 +63,9 @@ export default {
 
     return {
       login() {
-        auth0.loginWithRedirect();
+        auth0.loginWithRedirect({
+          redirect_uri: process.env.VUE_APP_REDIRECT_URL + "login",
+        });
       },
       cssSetting: setting,
       user: auth0.user,
