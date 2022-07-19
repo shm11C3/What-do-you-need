@@ -39,6 +39,6 @@ jobs:
 
       - name: Build
         run: |
-        mkdir app/frontend/dist
-        chmod 777 -R app/frontend/dist
-        docker container exec -i app bash -c "cd frontend && npm run build"
+          mkdir app/frontend/dist
+          chmod 777 -R app/frontend/dist
+          docker container exec -i app bash -c "cd frontend && npm run build"
