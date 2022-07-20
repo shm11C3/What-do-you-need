@@ -23,11 +23,11 @@ jobs:
           chmod 777 -R app/frontend/node_modules
           chmod 777 app/frontend/package-lock.json
           docker container exec -i app bash -c "cd frontend && npm install"
-          whoami
+          sudo chown -R runner app
 
       - name: Set env
+        working-directory: ./app
         run: |
-          sudo chown -R runner app
           cp frontend/.env.example frontend/.env
           sudo chmod 664 frontend/.env
           sed -i -e 's/VUE_APP_NAME=/VUE_APP_NAME=${{ secrets.VUE_APP_NAME }}/' frontend/.env
