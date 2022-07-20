@@ -28,15 +28,15 @@ jobs:
       - name: Set env
         working-directory: ./app
         run: |
-          cp frontend/.env.example frontend/.env
+          touch frontend/.env
           sudo chmod 664 frontend/.env
-          sed -i -e 's/VUE_APP_NAME=/VUE_APP_NAME=${{ secrets.VUE_APP_NAME }}/' frontend/.env
-          sed -i -e 's/VUE_APP_ROOT_API=/VUE_APP_ROOT_API=${{ secrets.VUE_APP_ROOT_API }}/' frontend/.env
-          sed -i -e 's/VUE_APP_HOSTNAME=/VUE_APP_HOSTNAME=${{ secrets.VUE_APP_HOSTNAME }}/' frontend/.env
-          sed -i -e 's/VUE_APP_URL=/VUE_APP_URL=${{ secrets.VUE_APP_URL }}/' frontend/.env
-          sed -i -e 's/VUE_APP_REDIRECT_URL=/VUE_APP_REDIRECT_URL=${{ secrets.VUE_APP_REDIRECT_URL }}/' frontend/.env
-          sed -i -e 's/VUE_APP_AUTH0_DOMAIN=/VUE_APP_AUTH0_DOMAIN=${{ secrets.VUE_APP_AUTH0_DOMAIN }}/' frontend/.env
-          sed -i -e 's/VUE_APP_AUTH0_CLIENT_ID=/VUE_APP_AUTH0_CLIENT_ID=${{ secrets.VUE_APP_AUTH0_CLIENT_ID }}/' frontend/.env
+          echo "VUE_APP_NAME=${{ secrets.VUE_APP_NAME }}" >> .env
+          echo "VUE_APP_ROOT_API=${{ secrets.VUE_APP_ROOT_API }}" >> .env
+          echo "VUE_APP_HOSTNAME=${{ secrets.VUE_APP_HOSTNAME }}" >> .env
+          echo "VUE_APP_URL=${{ secrets.VUE_APP_URL }}" >> .env
+          echo "VUE_APP_REDIRECT_URL=${{ secrets.VUE_APP_REDIRECT_URL }}" >> .env
+          echo "VUE_APP_AUTH0_DOMAIN=${{ secrets.VUE_APP_AUTH0_DOMAIN }}" >> .env
+          echo "VUE_APP_AUTH0_CLIENT_ID=${{ secrets.VUE_APP_AUTH0_CLIENT_ID }}" >> .env
 
       - name: Build
         run: |
