@@ -28,8 +28,8 @@ jobs:
       - name: Set env
         run: |
           sudo chown -R runner app
-          ls -la
           docker container exec -i app bash -c "cp frontend/.env.example frontend/.env"
+          sudo chown runner app/frontend/.env
           docker container exec -i app bash -c "chmod 664 frontend/.env"
           docker container exec -i app bash -c "sed -i -e 's/VUE_APP_NAME=/VUE_APP_NAME=${{ secrets.VUE_APP_NAME }}/' frontend/.env"
           docker container exec -i app bash -c "sed -i -e 's/VUE_APP_ROOT_API=/VUE_APP_ROOT_API=${{ secrets.VUE_APP_ROOT_API }}/' frontend/.env"
