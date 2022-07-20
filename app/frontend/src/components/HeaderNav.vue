@@ -65,7 +65,9 @@ export default {
 
     return {
       login() {
-        auth0.loginWithRedirect();
+        auth0.loginWithRedirect({
+          redirect_uri: process.env.VUE_APP_REDIRECT_URL + "login",
+        });
       },
       cssSetting: setting,
       user: auth0.user,
