@@ -1,11 +1,18 @@
-<!--ローディング時のUIコンポーネントを追加する-->
+<template>
+  <LoadingSpinner class="mt-20" />
+</template>
 <script>
 import { useAuth0 } from "@auth0/auth0-vue";
 import { onMounted } from "vue";
 import { useRouter } from "vue-router";
+import LoadingSpinner from "../../components/parts/LoadingSpinner.vue";
 
 export default {
-  name: "App",
+  name: "AfterLogin",
+  components: {
+    LoadingSpinner,
+  },
+
   setup() {
     const auth0 = useAuth0();
     const router = useRouter();
@@ -33,7 +40,7 @@ export default {
       // 認証のチェック
       if (
         this.$store.getters.isAuthenticated &&
-        this.$store.getters.email_verified
+        !this.$store.getters.email_verified
       ) {
         this.$router.push("/error/email-verify");
       }

@@ -1,8 +1,6 @@
 <template>
   <div class="header">
-    <nav
-      :class="`flex items-center justify-between flex-wrap p-6 bg-${cssSetting.main}`"
-    >
+    <nav class="flex items-center justify-between flex-wrap p-5 bg-blue-500">
       <div class="flex items-center flex-shrink-0 text-white mr-6">
         <router-link to="/" class="font-semibold text-xl tracking-tight"
           >What do you want?</router-link
@@ -36,44 +34,118 @@
             コンテンツ名
           </router-link>
         </div>
-        <div
-          class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-gray-100 hover:bg-white mt-4 lg:mt-0"
+        <button
+          type="button"
+          @click="userModal"
+          class="inline-block items-center h-8 text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-gray-100 hover:bg-white mt-4 lg:mt-0"
         >
-          <div v-if="userIsLoading">Loading ...</div>
-          <div v-else>
+          <div>
             <div v-if="isAuthenticated">
-              <router-link to="/user/profile">
-                {{ user.nickname }}
-              </router-link>
+              {{ user.nickname }}
             </div>
-            <div v-else>
-              <button @click="login">Log in</button>
+            <div v-else>Login</div>
+          </div>
+        </button>
+      </div>
+    </nav>
+    <!--右ユーザーモーダル-->
+    <div class="container mx-auto">
+      <div class="flex justify-center">
+        <div
+          v-show="isOpen"
+          class="absolute inset-0 flex items-start justify-end mt-16 mr-2"
+        >
+          <div class="max-w-2xl bg-white rounded-md shadow-xl">
+            <div class="flex flex-row-reverse">
+              <button type="button" @click="userModal">
+                <Close />
+              </button>
+            </div>
+            <div class="p-6">
+              <!--プロフィールカード-->
+              <div class="flex items-center justify-between">
+                <router-link
+                  to="/user/profile"
+                  class="block p-6 max-w-sm bg-white rounded-lg border border-gray-200 shadow-md hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700 w-64"
+                >
+                  <!--Vuexから取得したプロフィール画像を表示-->
+                  <h5
+                    class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
+                  >
+                    Username
+                  </h5>
+                </router-link>
+              </div>
+              <div class="mt-4 border-t-2">
+                <button class="py-2 w-full text-left">Setting</button>
+              </div>
+              <div class="border-t-2">
+                <button @click="logout" class="py-2 w-full text-left">
+                  Logout
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </nav>
+    </div>
   </div>
 </template>
 <script>
 import { setting } from "../js/setting/style";
 import { useAuth0 } from "@auth0/auth0-vue";
+import { ref } from "vue";
+import { useStore } from "vuex";
+import { useRouter } from "vue-router";
+import Close from "vue-material-design-icons/Close.vue";
 
 export default {
+  name: "HeaderNav",
+
+  components: {
+    Close,
+  },
+
   setup() {
+    const store = useStore();
     const auth0 = useAuth0();
+    const router = useRouter();
+
+    const isOpen = ref(false);
+    let isAuthenticated = ref(store.getters.isAuthenticated);
 
     return {
-      login() {
-        auth0.loginWithRedirect({
-          redirect_uri: process.env.VUE_APP_REDIRECT_URL + "login",
+      logout() {
+        auth0.logout({
+          returnTo: process.env.VUE_APP_REDIRECT_URL + "logout",
         });
       },
+
+      userModal() {
+        if (this.isAuthenticated) {
+          this.isOpen = !this.isOpen;
+        } else {
+          router.push("/login");
+        }
+      },
+
+      isOpen,
+      isAuthenticated,
       cssSetting: setting,
       user: auth0.user,
-      isAuthenticated: auth0.isAuthenticated,
       userIsLoading: auth0.isLoading,
     };
+  },
+
+  watch: {
+    $route: function (to, from) {
+      if (
+        from.path.includes("user/redirect/logout") ||
+        from.path.includes("user/redirect/login")
+      ) {
+        this.isAuthenticated = this.$store.getters.isAuthenticated;
+      }
+    },
   },
 };
 </script>
