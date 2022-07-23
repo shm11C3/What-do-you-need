@@ -3,6 +3,7 @@ const auth = {
     isAuthenticated: false,
     email_verified: false,
     idTokenClaims: null, // idTokenは`vuex-persistedstate`には保存しない
+    userProfile: null,
   },
   getters: {
     isAuthenticated(state) {
@@ -20,6 +21,9 @@ const auth = {
     idTokenExpiration(state) {
       return state.idTokenClaims.exp;
     },
+    userProfile(state) {
+      return state.userProfile;
+    },
   },
   mutations: {
     isAuthenticated(state, e) {
@@ -32,6 +36,9 @@ const auth = {
 
     idTokenClaims(state, e) {
       state.idTokenClaims = e;
+    },
+    userProfile(state, e) {
+      state.userProfile = e;
     },
   },
   actions: {
@@ -50,6 +57,10 @@ const auth = {
       commit("isAuthenticated", false);
       commit("email_verified", false);
       commit("idTokenClaims", null);
+      commit("userProfile", null);
+    },
+    setUserprofile({ commit }, e) {
+      commit("userProfile", e);
     },
   },
 };

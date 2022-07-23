@@ -10,7 +10,11 @@ export default createStore({
   plugins: [
     createPersistedState({
       key: "vuex",
-      paths: ["auth.isAuthenticated", "auth.email_verified"],
+      paths: [
+        "auth.isAuthenticated",
+        "auth.email_verified",
+        "auth.userProfile",
+      ],
       storage: window.window.localStorage,
     }),
   ],

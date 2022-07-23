@@ -3,8 +3,10 @@
 </template>
 <script>
 import { useAuth0 } from "@auth0/auth0-vue";
-import { onMounted } from "vue";
+import { onMounted, ref, computed } from "vue";
 import { useRouter } from "vue-router";
+import { useStore } from "vuex";
+import userFetcher from "../../js/fetchers/userFetcher";
 import LoadingSpinner from "../../components/parts/LoadingSpinner.vue";
 
 export default {
@@ -16,6 +18,7 @@ export default {
   setup() {
     const auth0 = useAuth0();
     const router = useRouter();
+    const store = useStore();
 
     let isLoading = auth0.isLoading;
     let isAuthenticated = auth0.isAuthenticated;
@@ -26,28 +29,74 @@ export default {
       }
     });
 
+    const registeredIdTokenClaims = computed(() => {
+      return store.getters.idTokenClaims;
+    });
+
     return {
+      registeredIdTokenClaims,
+
       isLoading: isLoading,
       auth0User: auth0.user,
+      isAuthRegisterCompleted: ref(false),
+      isUserRegisterCompleted: ref(false),
+      isAllRegistered: ref(false),
       isAuthenticated: isAuthenticated,
       idTokenClaims: auth0.idTokenClaims,
     };
   },
+
   watch: {
+    // ID Token が登録されたタイミングでユーザープロフィールを取得する
+    registeredIdTokenClaims: async function () {
+      const { fetchUserProfile } = userFetcher();
+
+      try {
+        const userProfile = JSON.parse(
+          JSON.stringify(await fetchUserProfile())
+        );
+
+        this.$store.dispatch("setUserprofile", userProfile[0]);
+      } catch (e) {
+        console.error(e);
+        this.$store.dispatch("logout");
+
+        this.$router.push("/"); // [Todo] エラーページへリダイレクトさせる
+      }
+
+      if (this.$store.getters.userProfile) {
+        this.isUserRegisterCompleted = true;
+      }
+
+      if (this.isAuthRegisterCompleted) {
+        this.isAllRegistered = true;
+      }
+    },
     isLoading: function () {
       this.storeAuthenticate();
 
+      if (this.$store.getters.isAuthenticated) {
+        this.isAuthRegisterCompleted = true;
+      }
+
+      if (this.isUserRegisterCompleted) {
+        this.isAllRegistered = true;
+      }
+    },
+    isAllRegistered: function (e) {
+      if (!e || !this.$store.getters.isAuthenticated) {
+        return;
+      }
+
       // 認証のチェック
-      if (
-        this.$store.getters.isAuthenticated &&
-        !this.$store.getters.email_verified
-      ) {
+      if (!this.$store.getters.email_verified) {
         this.$router.push("/error/email-verify");
       }
 
       this.$router.push("/");
     },
   },
+
   methods: {
     // Vuexに認証の状態を保存
     storeAuthenticate() {
