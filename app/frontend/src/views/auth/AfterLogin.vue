@@ -47,7 +47,9 @@ export default {
   },
 
   watch: {
-    // ID Token が登録されたタイミングでユーザープロフィールを取得する
+    /**
+     * ID Token が登録されたタイミングでユーザープロフィールを取得する
+     */
     registeredIdTokenClaims: async function () {
       const { fetchUserProfile } = userFetcher();
 
@@ -72,6 +74,10 @@ export default {
         this.isAllRegistered = true;
       }
     },
+
+    /**
+     * `auth0.isLoading`更新時に認証状態を保存
+     */
     isLoading: function () {
       this.storeAuthenticate();
 
@@ -83,6 +89,12 @@ export default {
         this.isAllRegistered = true;
       }
     },
+
+    /**
+     * すべての登録処理終了時に認証の状態をチェックする
+     *
+     * @param {boolean} e
+     */
     isAllRegistered: function (e) {
       if (!e || !this.$store.getters.isAuthenticated) {
         return;
@@ -91,6 +103,13 @@ export default {
       // 認証のチェック
       if (!this.$store.getters.email_verified) {
         this.$router.push("/error/email-verify");
+        return;
+      }
+
+      // バックエンドAPIのユーザープロフィール登録チェック
+      if (!this.$store.getters.userProfile.status) {
+        this.$router.push("/user/register");
+        return;
       }
 
       this.$router.push("/");
@@ -98,7 +117,9 @@ export default {
   },
 
   methods: {
-    // Vuexに認証の状態を保存
+    /**
+     * Vuexに認証の状態を保存
+     */
     storeAuthenticate() {
       let email_verified = false;
       let idTokenClaims = null;
