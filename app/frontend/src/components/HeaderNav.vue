@@ -41,7 +41,10 @@
         >
           <div>
             <div v-if="isAuthenticated">
-              {{ user.nickname }}
+              <div v-if="userProfile">
+                {{ userProfile.username }}
+              </div>
+              <div v-else>Name not registered</div>
             </div>
             <div v-else>Login</div>
           </div>
@@ -72,7 +75,10 @@
                   <h5
                     class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
                   >
-                    Username
+                    <div v-if="isAuthenticated && userProfile">
+                      {{ userProfile.username }}
+                    </div>
+                    <div v-else>Name not registered</div>
                   </h5>
                 </router-link>
               </div>
@@ -94,7 +100,7 @@
 <script>
 import { setting } from "../js/setting/style";
 import { useAuth0 } from "@auth0/auth0-vue";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import Close from "vue-material-design-icons/Close.vue";
@@ -114,6 +120,10 @@ export default {
     const isOpen = ref(false);
     let isAuthenticated = ref(store.getters.isAuthenticated);
 
+    const userProfile = computed(() => {
+      return store.getters.userProfile;
+    });
+
     return {
       logout() {
         auth0.logout({
@@ -132,7 +142,7 @@ export default {
       isOpen,
       isAuthenticated,
       cssSetting: setting,
-      user: auth0.user,
+      userProfile,
       userIsLoading: auth0.isLoading,
     };
   },

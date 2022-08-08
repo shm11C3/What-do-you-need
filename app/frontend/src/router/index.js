@@ -30,6 +30,11 @@ const routes = [
       import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
   },
   {
+    path: "/user/register",
+    name: "registerUserProfile",
+    component: () => import("../views/user/RegisterProfileView.vue"),
+  },
+  {
     path: "/user/redirect/login",
     name: "afterLogin",
     component: () => import("../views/auth/AfterLogin.vue"),
@@ -49,8 +54,8 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const authRequired = privatePages.includes(to.path);
 
-  const isAuthenticated = store.state.auth.isAuthenticated;
-  const email_verified = store.state.auth.email_verified;
+  const isAuthenticated = store.getters.isAuthenticated;
+  const email_verified = store.getters.email_verified;
 
   // email verifyの検証
   if (
@@ -60,6 +65,10 @@ router.beforeEach((to, from, next) => {
   ) {
     next("/error/email-verify");
     return;
+  }
+
+  if (!isAuthenticated && to.path.includes("/error/email-verify")) {
+    return false;
   }
 
   if (to.path.includes("/user/redirect/login") && isAuthenticated) {

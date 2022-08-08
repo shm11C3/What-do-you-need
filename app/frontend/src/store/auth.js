@@ -24,6 +24,9 @@ const auth = {
     userProfile(state) {
       return state.userProfile;
     },
+    auth_id(state) {
+      return state.idTokenClaims.sub;
+    },
   },
   mutations: {
     isAuthenticated(state, e) {
@@ -59,8 +62,11 @@ const auth = {
       commit("idTokenClaims", null);
       commit("userProfile", null);
     },
-    setUserprofile({ commit }, e) {
+    setUserProfile({ commit }, e) {
       commit("userProfile", e);
+    },
+    removeUserProfile({ commit }) {
+      commit("userProfile", null);
     },
   },
 };
