@@ -58,7 +58,9 @@ export default {
           JSON.stringify(await fetchUserProfile())
         );
 
-        this.$store.dispatch("setUserprofile", userProfile[0]);
+        if (userProfile[1].isExist_userProfile) {
+          this.$store.dispatch("setUserProfile", userProfile[0]);
+        }
       } catch (e) {
         console.error(e);
         this.$store.dispatch("logout");
@@ -107,7 +109,7 @@ export default {
       }
 
       // バックエンドAPIのユーザープロフィール登録チェック
-      if (!this.$store.getters.userProfile.status) {
+      if (!this.$store.getters.userProfile) {
         this.$router.push("/user/register");
         return;
       }
