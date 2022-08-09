@@ -43,3 +43,10 @@ jobs:
           mkdir app/frontend/dist
           chmod 777 -R app/frontend/dist
           docker container exec -i app bash -c "cd frontend && npm run build"
+
+       - name: Deploy
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          aws s3 cp --recursive --region us-west-1 app/frontend/dist s3://strn-dev
