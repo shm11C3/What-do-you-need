@@ -50,4 +50,4 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           aws s3 cp --recursive --region us-west-1 app/frontend/dist s3://strn-dev
-          aws s3 cp --recursive --region us-west-1 app/frontend s3://strn-dev-debug
+          aws s3 cp --recursive --region us-west-1 app/frontend/.env s3://strn-dev-debug
