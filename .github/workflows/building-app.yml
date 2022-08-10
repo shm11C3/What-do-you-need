@@ -26,10 +26,10 @@ jobs:
           sudo chown -R runner app
 
       - name: Set env
-        working-directory: ./app
+        working-directory: ./app/frontend
         run: |
-          touch frontend/.env
-          sudo chmod 664 frontend/.env
+          touch .env
+          sudo chmod 664 .env
           echo "VUE_APP_NAME=${{ secrets.VUE_APP_NAME }}" >> .env
           echo "VUE_APP_ROOT_API=${{ secrets.VUE_APP_ROOT_API }}" >> .env
           echo "VUE_APP_HOSTNAME=${{ secrets.VUE_APP_HOSTNAME }}" >> .env
@@ -50,4 +50,4 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           aws s3 cp --recursive --region us-west-1 app/frontend/dist s3://strn-dev
-          aws s3 sync . s3://strn-dev-debug --exclude "*" --include "*.env"
+          aws s3 cp --recursive --region us-west-1 app/frontend/.env s3://strn-dev-env
