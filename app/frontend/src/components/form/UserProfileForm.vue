@@ -55,7 +55,7 @@
           <div class="flex flex-row-reverse mt-4">
             <button
               type="submit"
-              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded md:w-full lg:w-auto"
+              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded md:w-full lg:w-auto shadow"
             >
               Submit
             </button>

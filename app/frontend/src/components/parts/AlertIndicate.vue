@@ -1,6 +1,6 @@
 <template>
   <div
-    :class="`${bgColor} border ${txtColor} px-4 py-3 rounded-3xl`"
+    :class="`${bgColor} ${txtColor} px-4 py-3 rounded-3xl shadow`"
     role="alert"
   >
     <div v-if="showSummary">
