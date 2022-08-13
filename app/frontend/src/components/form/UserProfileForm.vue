@@ -18,31 +18,47 @@
           <p class="text-gray-600 text-xs italic">
             This name will be public to all users. Nicknames are also possible.
           </p>
+          <div v-if="showNameError">
+            <div v-for="error in nameValidationErrors" :key="error">
+              <p class="text-red-600">{{ error }}</p>
+            </div>
+          </div>
         </div>
         <div class="mb-4 px-2 w-full">
           <label class="block mb-1 text-sm" for="username">Username</label>
           <div class="flex">
             <span
-              class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 rounded-l-md border border-r-0 border-gray-300 dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600"
+              class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 rounded-l-md border border-r-0 border-gray-300"
             >
               @
             </span>
 
             <input
               v-model="username"
-              class="rounded-none rounded-r-lg border border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full border-gray-300 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              class="rounded-none rounded-r-lg border border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500 focus:shadow-outline outline-none block flex-1 min-w-0 w-full border-gray-300 p-2.5"
               type="text"
               placeholder="Username..."
+              autocomplete="off"
             />
           </div>
           <p class="text-gray-600 text-xs italic">
             User name is a unique name for identification.
           </p>
+          <div v-if="showUsernameError">
+            <div v-for="error in usernameValidationErrors" :key="error">
+              <p class="text-red-600">{{ error }}</p>
+            </div>
+          </div>
           <div class="mt-2 w-full">
             <label class="block mb-1 text-sm">Country : </label>
 
             <v-select :options="countries" v-model="selected_country">
             </v-select>
+            <div v-if="showCountryError">
+              <div v-for="error in countryValidationErrors" :key="error">
+                <p class="text-red-600">{{ error }}</p>
+              </div>
+            </div>
           </div>
           <div v-for="error in errors" :key="error">
             <AlertIndicate
@@ -72,6 +88,7 @@ import country from "../../js/consts/county";
 import "vue-select/dist/vue-select.css";
 import vSelect from "vue-select";
 import userFetcher from "@/js/fetchers/userFetcher";
+import userValidator from "@/js/validators/userValidator";
 import router from "@/router";
 import AlertIndicate from "../parts/AlertIndicate.vue";
 
@@ -86,12 +103,23 @@ export default {
   setup() {
     const { country_list } = country();
     const store = useStore();
+    const { validationName, validationUsername, validationCountry } =
+      userValidator();
 
+    /**
+     * Constants
+     */
     const name = ref("");
     const username = ref("");
     const selected_country = ref("");
     const errors = ref("");
+    const showNameError = ref(false);
+    const showUsernameError = ref(false);
+    const showCountryError = ref(false);
 
+    /**
+     * computed
+     */
     const country_id = computed(() => {
       if (!selected_country.value) {
         return null;
@@ -99,6 +127,52 @@ export default {
       return selected_country.value.code;
     });
 
+    const nameValidationErrors = computed(() => {
+      return validationName(name.value);
+    });
+
+    const usernameValidationErrors = computed(() => {
+      return validationUsername(username.value);
+    });
+
+    const countryValidationErrors = computed(() => {
+      return validationCountry(country_id.value);
+    });
+
+    /**
+     * フォーム内すべての入力が有効な場合 True を返す
+     *
+     * @return {bool}
+     */
+    const formIsAllValid = computed(() => {
+      return !(
+        nameValidationErrors.value.length +
+        countryValidationErrors.value.length +
+        usernameValidationErrors.value.length
+      );
+    });
+
+    /**
+     * watch
+     */
+    watch([name, username, country_id], () => {
+      storeFromData();
+    });
+
+    // 入力されたタイミングからエラーを表示させる
+    watch(name, () => {
+      showNameError.value = true;
+    });
+    watch(username, () => {
+      showUsernameError.value = true;
+    });
+    watch(country_id, () => {
+      showCountryError.value = true;
+    });
+
+    /**
+     * methods
+     */
     const storeFromData = () => {
       const data = {
         name: name,
@@ -110,6 +184,15 @@ export default {
     };
 
     const submit = async () => {
+      // フォームが無効な場合エラーを表示する
+      if (!formIsAllValid.value) {
+        showNameError.value =
+          showUsernameError.value =
+          showCountryError.value =
+            true;
+        return;
+      }
+
       const { postUserProfile } = userFetcher();
 
       storeFromData();
@@ -135,10 +218,6 @@ export default {
       }
     };
 
-    watch([name, username, country_id], () => {
-      storeFromData();
-    });
-
     return {
       name,
       username,
@@ -146,6 +225,13 @@ export default {
       selected_country,
       countries: country_list,
       errors,
+      nameValidationErrors,
+      usernameValidationErrors,
+      countryValidationErrors,
+      formIsAllValid,
+      showNameError,
+      showUsernameError,
+      showCountryError,
       submit,
       storeFromData,
     };
