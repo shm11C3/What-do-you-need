@@ -39,8 +39,6 @@ export default function () {
     const form_data = store.getters.form_userProfile;
     const idToken = store.getters.idToken;
 
-    console.log(form_data);
-
     return new Promise((resolve, reject) => {
       if (!idToken) {
         reject("ID Token is not registered.");
@@ -65,8 +63,23 @@ export default function () {
     });
   };
 
+  const fetchDuplicateUsername_exists = (request_username) => {
+    return new Promise((resolve, reject) => {
+      axios
+        .get(`/user/username/exists?username=${request_username}`)
+        .then(function (response) {
+          resolve(response.data);
+        })
+        .catch(function (error) {
+          console.error(error);
+          reject(error);
+        });
+    });
+  };
+
   return {
     fetchUserProfile,
     postUserProfile,
+    fetchDuplicateUsername_exists,
   };
 }
