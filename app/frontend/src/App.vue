@@ -15,6 +15,7 @@
 import HeaderNav from "./components/HeaderNav.vue";
 import { useAuth0 } from "@auth0/auth0-vue";
 import { useStore } from "vuex";
+import { ref, watch } from "vue";
 
 export default {
   components: {
@@ -25,6 +26,21 @@ export default {
 
   setup() {
     const store = useStore();
+
+    const isNearingExpirationIdToken = ref(false);
+
+    /**
+     * ID Token の Exp を1分毎に検証し期限切れ3分前に`true`を返す
+     */
+    setInterval(() => {
+      if (!store.getters.idTokenClaims) {
+        return null;
+      }
+
+      const now_unix_s = Math.round(new Date().getTime() / 1000);
+      isNearingExpirationIdToken.value =
+        now_unix_s + 180 > store.getters.idTokenExpiration;
+    }, 60000);
 
     /**
      * IdTokenがVuexに登録されていない場合に取得する
@@ -42,18 +58,21 @@ export default {
         return useAuth0().idTokenClaims;
       }
 
-      // idTokenの有効期限を確認
-      if (idTokenClaims.exp < Date.now() + 600000) {
-        return useAuth0().idTokenClaims;
-      }
-
       return idTokenClaims;
     };
 
-    const idTokenClaims = fetchIdToken();
+    const idTokenClaims = ref(fetchIdToken());
+
+    // 有効期限に近づいたらIdTokenを更新する
+    watch(isNearingExpirationIdToken, (e) => {
+      if (!e) return;
+
+      idTokenClaims.value = useAuth0().idTokenClaims;
+    });
 
     return {
-      idTokenClaims: idTokenClaims,
+      isNearingExpirationIdToken,
+      idTokenClaims,
     };
   },
   watch: {
