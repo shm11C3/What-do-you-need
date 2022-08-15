@@ -16,6 +16,7 @@ import HeaderNav from "./components/HeaderNav.vue";
 import { useAuth0 } from "@auth0/auth0-vue";
 import { useStore } from "vuex";
 import { ref, watch } from "vue";
+import { useRouter } from "vue-router";
 
 export default {
   components: {
@@ -26,8 +27,11 @@ export default {
 
   setup() {
     const store = useStore();
+    const auth0 = useAuth0();
+    const router = useRouter();
 
     const isNearingExpirationIdToken = ref(false);
+    const idTokenClaims = ref();
 
     /**
      * ID Token の Exp を1分毎に検証し期限切れ3分前に`true`を返す
@@ -55,30 +59,31 @@ export default {
 
       // idTokenがvuexに保存されているか
       if (!idTokenClaims) {
-        return useAuth0().idTokenClaims;
+        return auth0.idTokenClaims;
       }
 
       return idTokenClaims;
     };
 
-    const idTokenClaims = ref(fetchIdToken());
-
-    // 有効期限に近づいたらIdTokenを更新する
+    // 有効期限に近づいたらリロードさせる
     watch(isNearingExpirationIdToken, (e) => {
       if (!e) return;
+      router.go({ path: router.currentRoute.path, force: true });
+    });
 
-      idTokenClaims.value = useAuth0().idTokenClaims;
+    watch(idTokenClaims, (e) => {
+      if (!e) return;
+      store.dispatch("setIdTokenClaims", e.value);
+    });
+
+    watch(auth0.isLoading, () => {
+      idTokenClaims.value = fetchIdToken();
     });
 
     return {
       isNearingExpirationIdToken,
       idTokenClaims,
     };
-  },
-  watch: {
-    idTokenClaims: function (e) {
-      this.$store.dispatch("setIdTokenClaims", e);
-    },
   },
 };
 </script>
