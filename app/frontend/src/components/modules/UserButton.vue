@@ -70,7 +70,7 @@ export default {
 
   setup(props, context) {
     const bgColors = ref();
-    const animation = ref();
+    const animation = ref(["", "", ""]);
 
     /**
      * ボタンのバックグラウンドカラーを変更する
@@ -82,20 +82,18 @@ export default {
       bgColors.value[active] = bgColor.active;
     };
 
-    const initClickAnimation = () => {
-      animation.value = ["", "", ""];
-    };
-
     /**
      * ボタンクリック時のCSSアニメーションを0.5秒追加する
      *
      * @param {int} buttonNumber
      */
     const clickAnimation = (buttonNumber) => {
-      initClickAnimation();
+      animation.value = ["", "", ""];
       animation.value[buttonNumber] = " animate-bounce";
 
-      setTimeout(initClickAnimation, 500);
+      setTimeout(() => {
+        animation.value[buttonNumber] = "";
+      }, 500);
     };
 
     /**
@@ -110,7 +108,6 @@ export default {
     };
 
     changeBgColors(props.active);
-    initClickAnimation();
 
     return {
       onClickButton,
