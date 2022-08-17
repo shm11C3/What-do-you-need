@@ -147,6 +147,7 @@ export default {
     const isLoading = ref(false);
     const duplicateUsername_isLoading = ref(false);
     const duplicateUsernameError = ref("");
+    const countries = country_list;
 
     /**
      * computed
@@ -270,10 +271,12 @@ export default {
       // APIにPOSTする前に更新を反映
       store.dispatch("setUserProfile", {
         auth_id: store.getters.auth_id,
-        country: selected_country.value.label,
-        country_id: selected_country.value.code,
-        name: name,
-        username: username,
+        country: countries.find(
+          (el) => el.code == store.getters.form_userProfile.country_id
+        ).label,
+        country_id: store.getters.form_userProfile.country_id,
+        name: store.getters.form_userProfile.name,
+        username: store.getters.form_userProfile.username,
       });
 
       try {
@@ -313,7 +316,7 @@ export default {
       username,
       country_id,
       selected_country,
-      countries: country_list,
+      countries,
       usernameIsFocus,
       errors,
       nameValidationErrors,
