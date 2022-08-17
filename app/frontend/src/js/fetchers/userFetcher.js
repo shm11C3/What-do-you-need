@@ -63,6 +63,31 @@ export default function () {
     });
   };
 
+  const updateUserProfile = () => {
+    const form_data = store.getters.form_userProfile;
+    const idToken = store.getters.idToken;
+
+    return new Promise((resolve, reject) => {
+      if (!idToken) {
+        reject("ID Token is not registered.");
+      }
+
+      axios
+        .put("user/update", form_data, {
+          headers: {
+            Authorization: `Bearer ${idToken}`,
+          },
+        })
+        .then(function (response) {
+          resolve(response.data);
+        })
+        .catch(function (error) {
+          console.error(error);
+          reject(error);
+        });
+    });
+  };
+
   const fetchDuplicateUsername_exists = (request_username) => {
     return new Promise((resolve, reject) => {
       axios
@@ -80,6 +105,7 @@ export default function () {
   return {
     fetchUserProfile,
     postUserProfile,
+    updateUserProfile,
     fetchDuplicateUsername_exists,
   };
 }

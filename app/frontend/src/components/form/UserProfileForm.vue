@@ -2,7 +2,10 @@
   <div class="p-3 lg:flex justify-center">
     <div class="from-group lg:w-6/12">
       <form @submit.prevent="submit">
-        <h2 class="text-4xl font-bold text-center">Register Profile</h2>
+        <h2 class="text-4xl font-bold text-center">
+          <div v-if="isRegister">Register Profile</div>
+          <div v-else>Update Profile</div>
+        </h2>
         <h3 class="mt-2 text-xl text-center">Please enter your profile</h3>
         <!--プロフィール画像-->
         <div class="mb-4 px-2 w-full">
@@ -110,18 +113,21 @@ import "vue-select/dist/vue-select.css";
 import vSelect from "vue-select";
 import userFetcher from "@/js/fetchers/userFetcher";
 import userValidator from "@/js/validators/userValidator";
-import router from "@/router";
 import AlertIndicate from "../parts/AlertIndicate.vue";
 
 export default {
   name: "userProfileForm",
+
+  props: {
+    isRegister: { type: Boolean, default: false },
+  },
 
   components: {
     vSelect,
     AlertIndicate,
   },
 
-  setup() {
+  setup(props, context) {
     const { country_list } = country();
     const store = useStore();
     const { validationName, validationUsername, validationCountry } =
@@ -194,6 +200,13 @@ export default {
         return;
       }
 
+      if (
+        !props.isRegister &&
+        username.value == store.getters.userProfile.username
+      ) {
+        return;
+      }
+
       duplicateUsernameError.value = "";
 
       if (usernameValidationErrors.value.length) {
@@ -248,9 +261,11 @@ export default {
 
       isLoading.value = true;
 
-      const { postUserProfile } = userFetcher();
+      const { postUserProfile, updateUserProfile } = userFetcher();
 
       storeFromData();
+
+      const currentUserProfile = store.getters.userProfile;
 
       // APIにPOSTする前に更新を反映
       store.dispatch("setUserProfile", {
@@ -262,18 +277,36 @@ export default {
       });
 
       try {
-        const result = JSON.parse(JSON.stringify(await postUserProfile()));
+        let response;
+        if (props.isRegister) {
+          response = await postUserProfile();
+        } else {
+          response = await updateUserProfile();
+        }
+        const result = JSON.parse(JSON.stringify(response));
 
         if (result) {
-          router.push("/userProfile");
+          context.emit("success");
         }
       } catch (e) {
         errors.value = e.response.data.errors;
-        store.dispatch("removeUserProfile");
+        store.dispatch("setUserProfile", currentUserProfile);
       }
 
       isLoading.value = false;
     };
+
+    // アップデート用フォームの場合現在の値を入れる
+    if (!props.isRegister) {
+      name.value = store.getters.userProfile.name;
+      username.value = store.getters.userProfile.username;
+      selected_country.value = {
+        code: store.getters.userProfile.country_id,
+        label: store.getters.userProfile.country,
+      };
+
+      storeFromData();
+    }
 
     return {
       name,
