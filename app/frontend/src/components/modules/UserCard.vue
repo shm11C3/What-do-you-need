@@ -1,6 +1,6 @@
 <template>
   <div
-    class="lg:flex flex-col lg:flex-row block bg-gray-700 shadow-xl rounded-3xl lg:h-28 h-56 mx-4 lg:mx-16"
+    class="lg:flex flex-col lg:flex-row block bg-gray-700 shadow-xl rounded-3xl lg:h-28 h-56 mx-3"
   >
     <div class="inline-block items-center m-4">
       <img class="rounded-full" src="https://via.placeholder.com/80x80x/" />
@@ -26,7 +26,7 @@
   </div>
 </template>
 <script>
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import CountryFlag from "vue-country-flag-next";
 import country from "../../js/consts/county";
 
@@ -46,9 +46,9 @@ export default {
 
     const showCountryName = ref(false);
 
-    const country_code = country_code_list.find(
-      (el) => el.code == props.country_id
-    ).label;
+    const country_code = computed(() => {
+      return country_code_list.find((el) => el.code == props.country_id).label;
+    });
 
     const changeCountryView = () => {
       showCountryName.value = !showCountryName.value;

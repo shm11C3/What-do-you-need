@@ -1,12 +1,11 @@
 <template>
-  <div class="p-3 lg:flex justify-center">
-    <div class="from-group lg:w-6/12">
+  <div class="p-3">
+    <div class="from-group">
       <form @submit.prevent="submit">
-        <h2 class="text-4xl font-bold text-center">
-          <div v-if="isRegister">Register Profile</div>
-          <div v-else>Update Profile</div>
-        </h2>
-        <h3 class="mt-2 text-xl text-center">Please enter your profile</h3>
+        <div v-if="isRegister">
+          <h2 class="text-4xl font-bold text-center">Register Profile</h2>
+          <h3 class="mt-2 text-xl text-center">Please enter your profile</h3>
+        </div>
         <!--プロフィール画像-->
         <div class="mb-4 px-2 w-full">
           <label class="block mb-1 text-sm" for="name">Name</label>

@@ -1,5 +1,9 @@
 <template>
-  <UserProfileForm @success="successRegister" :isRegister="true" />
+  <div class="lg:flex justify-center">
+    <div class="lg:w-6/12">
+      <UserProfileForm @success="successRegister" :isRegister="true" />
+    </div>
+  </div>
 </template>
 <script>
 import UserProfileForm from "@/components/form/UserProfileForm.vue";

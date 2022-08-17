@@ -1,6 +1,6 @@
 <template>
-  <div class="mx-4 lg:mx-16">
-    <div class="flex lg:flex-row flex-col items-stretch h-auto">
+  <div class="mx-3">
+    <div class="flex sm:flex-row flex-col items-stretch h-auto">
       <button
         v-bind:class="
           bgColors[0] +
@@ -18,7 +18,7 @@
         v-bind:class="
           bgColors[1] +
           animation[1] +
-          ' grow text-white text-center text-xl px-4 py-2 my-2 mx-0 lg:mx-4 rounded-full h-16 shadow-xl'
+          ' grow text-white text-center text-xl px-4 py-2 my-2 mx-0 sm:mx-4 rounded-full h-16 shadow-xl'
         "
         v-on:click="onClickButton(1)"
       >
