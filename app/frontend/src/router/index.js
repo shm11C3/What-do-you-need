@@ -35,6 +35,11 @@ const routes = [
     component: () => import("../views/user/RegisterProfileView.vue"),
   },
   {
+    path: "/user/profile",
+    name: "userProfile",
+    component: () => import("../views/user/ProfileView.vue"),
+  },
+  {
     path: "/user/redirect/login",
     name: "afterLogin",
     component: () => import("../views/auth/AfterLogin.vue"),
