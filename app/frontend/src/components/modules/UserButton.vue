@@ -47,7 +47,7 @@
 import Post from "vue-material-design-icons/Post.vue";
 import AccountEdit from "vue-material-design-icons/AccountEdit.vue";
 import Cog from "vue-material-design-icons/Cog.vue";
-import { ref } from "vue";
+import { ref, watch, computed } from "vue";
 
 const bgColor = {
   active: "bg-blue-500",
@@ -106,6 +106,14 @@ export default {
       clickAnimation(buttonNumber);
       context.emit("clickButton", buttonNumber);
     };
+
+    const active = computed(() => {
+      return props.active;
+    });
+
+    watch(active, () => {
+      changeBgColors(active.value);
+    });
 
     changeBgColors(props.active);
 
