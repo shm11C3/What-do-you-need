@@ -19,7 +19,7 @@
         >
           Please check the email you sent to <br class="sm:hidden" />
           <span
-            v-if="!isLoading"
+            v-if="!isLoading && auth0User"
             class="text-gray-700 bg-neutral-200 font-extrabold px-1"
             >{{ auth0User.email }}</span
           >
@@ -31,10 +31,20 @@
 <script>
 import { setting } from "../../js/setting/style";
 import { useAuth0 } from "@auth0/auth0-vue";
+import { useRouter } from "vue-router";
+import { watch } from "vue";
 
 export default {
   setup() {
     const auth0 = useAuth0();
+    const router = useRouter();
+
+    watch(auth0, () => {
+      if (auth0.user && auth0.user.email_verified) {
+        router.push("login");
+      }
+    });
+
     return {
       isLoading: auth0.isLoading,
       cssSetting: setting,

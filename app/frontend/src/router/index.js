@@ -58,21 +58,15 @@ router.beforeEach((to, from, next) => {
   const email_verified = store.getters.email_verified;
 
   // email verifyの検証
-  if (
-    isAuthenticated &&
-    !email_verified &&
-    !to.path.includes("/error/email-verify")
-  ) {
+  if (isAuthenticated && !email_verified && authRequired) {
     next("/error/email-verify");
     return;
   }
 
-  if (!isAuthenticated && to.path.includes("/error/email-verify")) {
-    return false;
-  }
-
-  if (to.path.includes("/user/redirect/login") && isAuthenticated) {
-    return false;
+  // ユーザー登録の検証
+  if (isAuthenticated && !store.getters.userProfile && authRequired) {
+    next("/user/register");
+    return;
   }
 
   // ログインユーザ用パス
