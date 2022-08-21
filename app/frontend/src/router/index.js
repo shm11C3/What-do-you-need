@@ -16,6 +16,11 @@ const routes = [
     component: () => import("../views/auth/RedirectLoginPage.vue"),
   },
   {
+    path: "/logout",
+    name: "logout",
+    component: () => import("../views/auth/RedirectLogout.vue"),
+  },
+  {
     path: "/error/email-verify",
     name: "emailVerifyError",
     component: () => import("../views/error/EmailIsNotVerified.vue"),

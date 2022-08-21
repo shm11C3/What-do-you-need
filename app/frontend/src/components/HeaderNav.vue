@@ -126,9 +126,7 @@ export default {
 
     return {
       logout() {
-        auth0.logout({
-          returnTo: process.env.VUE_APP_REDIRECT_URL + "logout",
-        });
+        router.push("/logout");
       },
 
       userModal() {

@@ -3,6 +3,13 @@
     <div class="shadow-xl rounded-lg">
       <button
         class="flex items-center h-14 w-full hover:bg-gray-100 hover:text-blue-900 mt-8 rounded-t-lg"
+        @click="logout"
+      >
+        <Logout class="mx-2"></Logout>
+        <p class="text-xl">Logout</p>
+      </button>
+      <button
+        class="flex items-center h-14 w-full hover:bg-gray-100 hover:text-blue-900"
       >
         <AccountKey class="mx-2"></AccountKey>
         <p class="text-xl">Change Your Password</p>
@@ -47,18 +54,22 @@
 </template>
 <script>
 import { useStore } from "vuex";
+import { useRouter } from "vue-router";
+import Logout from "vue-material-design-icons/Logout.vue";
 import AccountKey from "vue-material-design-icons/AccountKey.vue";
 import AccountRemove from "vue-material-design-icons/AccountRemove.vue";
 import AccountClock from "vue-material-design-icons/AccountClock.vue";
 
 export default {
   components: {
+    Logout,
     AccountKey,
     AccountRemove,
     AccountClock,
   },
   setup() {
     const store = useStore();
+    const router = useRouter();
 
     let registrationDate;
     const created_at = store.getters.userProfile.created_at;
@@ -69,8 +80,13 @@ export default {
       registrationDate = created_at.split(" ")[0];
     }
 
+    const logout = () => {
+      router.push("/logout");
+    };
+
     return {
       registrationDate,
+      logout,
     };
   },
 };
