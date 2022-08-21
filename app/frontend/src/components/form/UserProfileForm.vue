@@ -1,9 +1,11 @@
 <template>
-  <div class="p-3 lg:flex justify-center">
-    <div class="from-group lg:w-6/12">
+  <div class="p-3">
+    <div class="from-group">
       <form @submit.prevent="submit">
-        <h2 class="text-4xl font-bold text-center">Register Profile</h2>
-        <h3 class="mt-2 text-xl text-center">Please enter your profile</h3>
+        <div v-if="isRegister">
+          <h2 class="text-4xl font-bold text-center">Register Profile</h2>
+          <h3 class="mt-2 text-xl text-center">Please enter your profile</h3>
+        </div>
         <!--プロフィール画像-->
         <div class="mb-4 px-2 w-full">
           <label class="block mb-1 text-sm" for="name">Name</label>
@@ -110,18 +112,21 @@ import "vue-select/dist/vue-select.css";
 import vSelect from "vue-select";
 import userFetcher from "@/js/fetchers/userFetcher";
 import userValidator from "@/js/validators/userValidator";
-import router from "@/router";
 import AlertIndicate from "../parts/AlertIndicate.vue";
 
 export default {
   name: "userProfileForm",
+
+  props: {
+    isRegister: { type: Boolean, default: false },
+  },
 
   components: {
     vSelect,
     AlertIndicate,
   },
 
-  setup() {
+  setup(props, context) {
     const { country_list } = country();
     const store = useStore();
     const { validationName, validationUsername, validationCountry } =
@@ -141,6 +146,7 @@ export default {
     const isLoading = ref(false);
     const duplicateUsername_isLoading = ref(false);
     const duplicateUsernameError = ref("");
+    const countries = country_list;
 
     /**
      * computed
@@ -191,6 +197,13 @@ export default {
     watch(usernameIsFocus, async () => {
       // `username`がフォーカスされている場合発動させない
       if (usernameIsFocus.value) {
+        return;
+      }
+
+      if (
+        !props.isRegister &&
+        username.value == store.getters.userProfile.username
+      ) {
         return;
       }
 
@@ -248,39 +261,61 @@ export default {
 
       isLoading.value = true;
 
-      const { postUserProfile } = userFetcher();
+      const { postUserProfile, updateUserProfile } = userFetcher();
 
       storeFromData();
+
+      const currentUserProfile = store.getters.userProfile;
 
       // APIにPOSTする前に更新を反映
       store.dispatch("setUserProfile", {
         auth_id: store.getters.auth_id,
-        country: selected_country.value.label,
-        country_id: selected_country.value.code,
-        name: name,
-        username: username,
+        country: countries.find(
+          (el) => el.code == store.getters.form_userProfile.country_id
+        ).label,
+        country_id: store.getters.form_userProfile.country_id,
+        name: store.getters.form_userProfile.name,
+        username: store.getters.form_userProfile.username,
       });
 
       try {
-        const result = JSON.parse(JSON.stringify(await postUserProfile()));
+        let response;
+        if (props.isRegister) {
+          response = await postUserProfile();
+        } else {
+          response = await updateUserProfile();
+        }
+        const result = JSON.parse(JSON.stringify(response));
 
         if (result) {
-          router.push("/userProfile");
+          context.emit("success");
         }
       } catch (e) {
         errors.value = e.response.data.errors;
-        store.dispatch("removeUserProfile");
+        store.dispatch("setUserProfile", currentUserProfile);
       }
 
       isLoading.value = false;
     };
+
+    // アップデート用フォームの場合現在の値を入れる
+    if (!props.isRegister) {
+      name.value = store.getters.userProfile.name;
+      username.value = store.getters.userProfile.username;
+      selected_country.value = {
+        code: store.getters.userProfile.country_id,
+        label: store.getters.userProfile.country,
+      };
+
+      storeFromData();
+    }
 
     return {
       name,
       username,
       country_id,
       selected_country,
-      countries: country_list,
+      countries,
       usernameIsFocus,
       errors,
       nameValidationErrors,
