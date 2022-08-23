@@ -8,12 +8,15 @@
         <Logout class="mx-2"></Logout>
         <p class="text-xl">Logout</p>
       </button>
-      <button
-        class="flex items-center h-14 w-full hover:bg-gray-100 hover:text-blue-900"
-      >
-        <AccountKey class="mx-2"></AccountKey>
-        <p class="text-xl">Change Your Password</p>
-      </button>
+      <div v-show="!isSocialLogin">
+        <router-link
+          class="flex items-center h-14 w-full hover:bg-gray-100 hover:text-blue-900"
+          to="/user/setting/password"
+        >
+          <AccountKey class="mx-2"></AccountKey>
+          <p class="text-xl">Change Your Password</p>
+        </router-link>
+      </div>
       <button
         class="flex items-center h-14 w-full hover:bg-gray-100 text-red-500 hover:text-pink-700"
       >
@@ -73,6 +76,9 @@ export default {
 
     let registrationDate;
     const created_at = store.getters.userProfile.created_at;
+    const auth_type = store.getters.userProfile.auth_id.split("|")[0];
+
+    const isSocialLogin = auth_type != "auth0";
 
     if (!created_at) {
       registrationDate = "No Data";
@@ -86,6 +92,7 @@ export default {
 
     return {
       registrationDate,
+      isSocialLogin,
       logout,
     };
   },

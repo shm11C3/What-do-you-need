@@ -45,6 +45,11 @@ const routes = [
     component: () => import("../views/user/ProfileView.vue"),
   },
   {
+    path: "/user/setting/password",
+    name: "ChangePassword",
+    component: () => import("../views/user/ChangePassword.vue"),
+  },
+  {
     path: "/user/redirect/login",
     name: "afterLogin",
     component: () => import("../views/auth/AfterLogin.vue"),
