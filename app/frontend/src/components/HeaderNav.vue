@@ -82,13 +82,20 @@
                   </h5>
                 </router-link>
               </div>
-              <div class="mt-4 border-t-2">
-                <button class="py-2 w-full text-left">Setting</button>
+              <div class="mt-4 hover:bg-gray-100">
+                <router-link
+                  to="/user/profile#setting"
+                  class="flex items-center py-2 w-full"
+                >
+                  <Cog />
+                  <span class="pl-1">Setting</span>
+                </router-link>
               </div>
-              <div class="border-t-2">
-                <button @click="logout" class="py-2 w-full text-left">
-                  Logout
-                </button>
+              <div class="hover:bg-gray-100">
+                <router-link to="/logout" class="flex items-center py-2 w-full">
+                  <Logout />
+                  <span class="pl-1">Logout</span>
+                </router-link>
               </div>
             </div>
           </div>
@@ -104,12 +111,16 @@ import { ref, computed } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import Close from "vue-material-design-icons/Close.vue";
+import Cog from "vue-material-design-icons/Cog.vue";
+import Logout from "vue-material-design-icons/Logout.vue";
 
 export default {
   name: "HeaderNav",
 
   components: {
     Close,
+    Cog,
+    Logout,
   },
 
   setup() {
@@ -126,9 +137,7 @@ export default {
 
     return {
       logout() {
-        auth0.logout({
-          returnTo: process.env.VUE_APP_REDIRECT_URL + "logout",
-        });
+        router.push("/logout");
       },
 
       userModal() {

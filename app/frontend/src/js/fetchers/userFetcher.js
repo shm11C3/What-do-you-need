@@ -102,10 +102,39 @@ export default function () {
     });
   };
 
+  /**
+   * Post `/auth/change-password`
+   *
+   * @returns {Promise}
+   */
+  const requestPasswordReset = () => {
+    const idToken = store.getters.idToken;
+    return new Promise((resolve, reject) => {
+      if (!idToken) {
+        reject("ID Token is not registered.");
+      }
+
+      axios
+        .post("/auth/change-password", null, {
+          headers: {
+            Authorization: `Bearer ${idToken}`,
+          },
+        })
+        .then(function (response) {
+          resolve(response);
+        })
+        .catch(function (error) {
+          console.error(error);
+          reject(error);
+        });
+    });
+  };
+
   return {
     fetchUserProfile,
     postUserProfile,
     updateUserProfile,
     fetchDuplicateUsername_exists,
+    requestPasswordReset,
   };
 }
