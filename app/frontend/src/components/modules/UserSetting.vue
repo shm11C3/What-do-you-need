@@ -48,11 +48,12 @@
       >
         <p class="text-xl ml-2">Application Source Codes</p>
       </router-link>
-      <button
+      <router-link
+        to="/contact-as"
         class="flex items-center h-14 w-full hover:bg-gray-100 hover:text-blue-900 rounded-b-lg"
       >
         <p class="text-xl ml-2">Contact As</p>
-      </button>
+      </router-link>
     </div>
   </div>
 </template>

@@ -64,6 +64,11 @@ const routes = [
     name: "appSources",
     component: () => import("../views/AppSources.vue"),
   },
+  {
+    path: "/contact-as",
+    name: "inquiryLink",
+    component: () => import("../views/InquiryLink.vue"),
+  },
 ];
 
 const router = createRouter({
