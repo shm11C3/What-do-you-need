@@ -59,6 +59,11 @@ const routes = [
     name: "afterLogout",
     component: () => import("../views/auth/AfterLogout.vue"),
   },
+  {
+    path: "/sources",
+    name: "appSources",
+    component: () => import("../views/AppSources.vue"),
+  },
 ];
 
 const router = createRouter({

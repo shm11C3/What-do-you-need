@@ -31,7 +31,7 @@
         </p>
       </div>
     </div>
-    <div class="shadow-xl rounded-lg">
+    <div class="shadow-xl rounded-lg mb-10">
       <button
         class="flex items-center h-14 w-full hover:bg-gray-100 hover:text-blue-900 mt-4 rounded-t-lg"
       >
@@ -42,11 +42,12 @@
       >
         <p class="text-xl ml-2">Terms of Service</p>
       </button>
-      <button
+      <router-link
         class="flex items-center h-14 w-full hover:bg-gray-100 hover:text-blue-900"
+        to="/sources"
       >
-        <p class="text-xl ml-2">Application Source</p>
-      </button>
+        <p class="text-xl ml-2">Application Source Codes</p>
+      </router-link>
       <button
         class="flex items-center h-14 w-full hover:bg-gray-100 hover:text-blue-900 rounded-b-lg"
       >
