@@ -17,12 +17,13 @@
           <p class="text-xl">Change Your Password</p>
         </router-link>
       </div>
-      <button
+      <router-link
+        to="/user/setting/delete-account"
         class="flex items-center h-14 w-full hover:bg-gray-100 text-red-500 hover:text-pink-700"
       >
         <AccountRemove class="mx-2" />
         <p class="text-xl">Delete Your Account</p>
-      </button>
+      </router-link>
       <div class="flex items-center h-14 w-full rounded-b-lg">
         <AccountClock class="mx-2 svg-reversal" />
         <p class="text-xl">
@@ -31,7 +32,7 @@
         </p>
       </div>
     </div>
-    <div class="shadow-xl rounded-lg">
+    <div class="shadow-xl rounded-lg mb-10">
       <button
         class="flex items-center h-14 w-full hover:bg-gray-100 hover:text-blue-900 mt-4 rounded-t-lg"
       >
@@ -42,16 +43,18 @@
       >
         <p class="text-xl ml-2">Terms of Service</p>
       </button>
-      <button
+      <router-link
         class="flex items-center h-14 w-full hover:bg-gray-100 hover:text-blue-900"
+        to="/sources"
       >
-        <p class="text-xl ml-2">Application Source</p>
-      </button>
-      <button
+        <p class="text-xl ml-2">Application Source Codes</p>
+      </router-link>
+      <router-link
+        to="/contact-as"
         class="flex items-center h-14 w-full hover:bg-gray-100 hover:text-blue-900 rounded-b-lg"
       >
         <p class="text-xl ml-2">Contact As</p>
-      </button>
+      </router-link>
     </div>
   </div>
 </template>
