@@ -16,6 +16,11 @@ const routes = [
     component: () => import("../views/auth/RedirectLoginPage.vue"),
   },
   {
+    path: "/logout",
+    name: "logout",
+    component: () => import("../views/auth/RedirectLogout.vue"),
+  },
+  {
     path: "/error/email-verify",
     name: "emailVerifyError",
     component: () => import("../views/error/EmailIsNotVerified.vue"),
@@ -40,6 +45,16 @@ const routes = [
     component: () => import("../views/user/ProfileView.vue"),
   },
   {
+    path: "/user/setting/password",
+    name: "ChangePassword",
+    component: () => import("../views/user/ChangePassword.vue"),
+  },
+  {
+    path: "/user/setting/delete-account",
+    name: "deleteUser",
+    component: () => import("../views/user/DeleteUser.vue"),
+  },
+  {
     path: "/user/redirect/login",
     name: "afterLogin",
     component: () => import("../views/auth/AfterLogin.vue"),
@@ -48,6 +63,16 @@ const routes = [
     path: "/user/redirect/logout",
     name: "afterLogout",
     component: () => import("../views/auth/AfterLogout.vue"),
+  },
+  {
+    path: "/sources",
+    name: "appSources",
+    component: () => import("../views/AppSources.vue"),
+  },
+  {
+    path: "/contact-as",
+    name: "inquiryLink",
+    component: () => import("../views/InquiryLink.vue"),
   },
 ];
 
