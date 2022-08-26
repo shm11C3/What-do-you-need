@@ -88,6 +88,35 @@ export default function () {
     });
   };
 
+  /**
+   * アカウント削除APIの呼び出し
+   *
+   * @returns {Promise}
+   */
+  const deleteAccount = () => {
+    const idToken = store.getters.idToken;
+
+    return new Promise((resolve, reject) => {
+      if (!idToken) {
+        reject("ID Token is not registered.");
+      }
+
+      axios
+        .delete("user/delete", {
+          headers: {
+            Authorization: `Bearer ${idToken}`,
+          },
+        })
+        .then(function (response) {
+          resolve(response.data);
+        })
+        .catch(function (error) {
+          console.error(error);
+          reject(error);
+        });
+    });
+  };
+
   const fetchDuplicateUsername_exists = (request_username) => {
     return new Promise((resolve, reject) => {
       axios
@@ -134,6 +163,7 @@ export default function () {
     fetchUserProfile,
     postUserProfile,
     updateUserProfile,
+    deleteAccount,
     fetchDuplicateUsername_exists,
     requestPasswordReset,
   };

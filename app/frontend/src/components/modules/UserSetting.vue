@@ -17,12 +17,13 @@
           <p class="text-xl">Change Your Password</p>
         </router-link>
       </div>
-      <button
+      <router-link
+        to="/user/setting/delete-account"
         class="flex items-center h-14 w-full hover:bg-gray-100 text-red-500 hover:text-pink-700"
       >
         <AccountRemove class="mx-2" />
         <p class="text-xl">Delete Your Account</p>
-      </button>
+      </router-link>
       <div class="flex items-center h-14 w-full rounded-b-lg">
         <AccountClock class="mx-2 svg-reversal" />
         <p class="text-xl">

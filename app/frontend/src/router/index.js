@@ -50,6 +50,11 @@ const routes = [
     component: () => import("../views/user/ChangePassword.vue"),
   },
   {
+    path: "/user/setting/delete-account",
+    name: "deleteUser",
+    component: () => import("../views/user/DeleteUser.vue"),
+  },
+  {
     path: "/user/redirect/login",
     name: "afterLogin",
     component: () => import("../views/auth/AfterLogin.vue"),
