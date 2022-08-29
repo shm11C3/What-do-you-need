@@ -74,6 +74,11 @@ const routes = [
     name: "inquiryLink",
     component: () => import("../views/InquiryLink.vue"),
   },
+  {
+    path: "/post/create",
+    name: "createPost",
+    component: () => import("../views/post/NewPostSubmit.vue"),
+  },
 ];
 
 const router = createRouter({
