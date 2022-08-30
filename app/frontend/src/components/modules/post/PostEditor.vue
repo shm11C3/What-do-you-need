@@ -4,6 +4,7 @@
     <div class="lg:w-6/12">
       <div class="mb-4 w-full">
         <input
+          v-model="title"
           class="w-full border px-4 py-2 rounded-lg outline-none"
           type="text"
           placeholder="Title"
@@ -53,23 +54,36 @@
           <vue-markdown-it class="md-container" :source="replacedContent" />
         </div>
       </div>
-      <div class="flex flex-row-reverse">
+      <div v-for="error in errors" :key="error">
+        <AlertIndicate
+          class="my-2"
+          theme="danger"
+          :showSummary="false"
+          :message="error[0]"
+        ></AlertIndicate>
+      </div>
+      <div v-show="!isLoading" class="flex flex-row-reverse">
         <button
-          type="submit"
+          v-on:click="submit(false, true)"
           class="inline-flex items-center px-5 py-2.5 text-sm font-medium text-center text-white bg-blue-500 rounded-lg focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-900 hover:bg-blue-800"
         >
           Publish post
         </button>
         <button
+          v-on:click="submit(true, false)"
           class="inline-flex items-center px-5 py-2.5 text-sm font-medium text-center text-white bg-gray-500 rounded-lg focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-900 hover:bg-gray-800 mr-2 ml-auto"
         >
           Save Draft
         </button>
         <button
+          v-on:click="cancel"
           class="inline-flex items-center px-5 py-2.5 text-sm font-medium text-center black rounded-lg focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-900 hover:bg-gray-200 border border-gray-600"
         >
           Cancel
         </button>
+      </div>
+      <div v-show="isLoading">
+        <LoadingSpinner />
       </div>
     </div>
   </div>
@@ -77,16 +91,41 @@
 
 <script setup>
 import { watch, ref, computed, onMounted, nextTick } from "vue";
+import { useStore } from "vuex";
+import { useRouter } from "vue-router";
 import mdHelper from "@/js/helpers/mdHelper";
+import postFetcher from "@/js/fetchers/postFetcher";
+import AlertIndicate from "@/components/parts/AlertIndicate.vue";
+import LoadingSpinner from "@/components/parts/LoadingSpinner.vue";
 import VueMarkdownIt from "vue3-markdown-it";
 import HelpCircleOutline from "vue-material-design-icons/HelpCircleOutline.vue";
 
+// eslint-disable-next-line no-undef
+const emit = defineEmits(["success"]);
+
+const { replacePlainToMd } = mdHelper();
+const store = useStore();
+const router = useRouter();
+
+const title = ref("");
 const content = ref("");
+const is_draft = ref(false);
+const is_publish = ref(false);
+
 const height = ref();
 const area = ref(null);
 const preview = ref(false);
 
-const { replacePlainToMd } = mdHelper();
+const isLoading = ref(false);
+const errors = ref([]);
+const isSaved = ref(false); // Whether saved in DB or not
+const showCancelConfirm = ref(false);
+const confirmCancel = ref(false);
+
+if (store.getters.form_post) {
+  title.value = store.getters.form_post.title;
+  content.value = store.getters.form_post.content;
+}
 
 /**
  * Adjust `textarea` height
@@ -118,4 +157,66 @@ watch(content, () => {
 const replacedContent = computed(() => {
   return replacePlainToMd(content.value);
 });
+
+watch([title, content], () => {
+  isSaved.value = false;
+  registerPostData_toVuex();
+});
+
+const registerPostData_toVuex = () => {
+  const data = {
+    title: title.value,
+    content: content.value,
+    is_draft: is_draft.value,
+    is_publish: is_publish.value,
+  };
+
+  store.dispatch("setForm_post", data);
+};
+
+/**
+ * Call the process of posting to the API
+ *
+ * @param {boolean} draft
+ * @param {boolean} publish
+ */
+const submit = async (draft, publish) => {
+  is_draft.value = draft;
+  is_publish.value = publish;
+
+  isLoading.value = true;
+
+  registerPostData_toVuex();
+  const { submitPost } = postFetcher();
+
+  try {
+    const response = await submitPost();
+    const result = JSON.parse(JSON.stringify(response));
+    if (result) {
+      emit("success", is_draft.value);
+
+      if (draft) {
+        isSaved.value = true;
+      } else {
+        store.dispatch("setForm_post", null);
+      }
+    }
+  } catch (e) {
+    errors.value = e.response.data.errors;
+  }
+
+  isLoading.value = false;
+};
+
+const cancel = () => {
+  if (isSaved.value || confirmCancel.value) {
+    showCancelConfirm.value = true;
+    // [Todo] キャンセルボタン押下時に`confirmCancel`をtrueにしてもう一度このメソッドを呼び出す
+    return;
+  }
+
+  store.dispatch("setForm_post", null);
+
+  router.push(router.referrer);
+};
 </script>
