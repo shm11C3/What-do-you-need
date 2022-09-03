@@ -2,6 +2,14 @@
 <template>
   <div class="lg:flex justify-center mt-10 px-2">
     <div class="lg:w-6/12">
+      <div v-show="isSaved">
+        <AlertIndicate
+          class="my-2"
+          theme="info"
+          :showSummary="false"
+          message="Successfully saved!"
+        />
+      </div>
       <div class="mb-4 w-full">
         <input
           v-model="title"
@@ -9,6 +17,34 @@
           type="text"
           placeholder="Title"
         />
+      </div>
+      <div class="mb-4">
+        <label
+          for="categories"
+          class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400"
+          >Category</label
+        >
+        <select
+          v-model="category"
+          class="border border-gray-300 text-gray-900 text-md rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        >
+          <option
+            selected
+            :value="null"
+            class="text-lg text-white bg-gray-300"
+            disabled
+          >
+            Please select a category
+          </option>
+          <option
+            v-for="category_form in categories"
+            :key="category_form"
+            :value="category_form.uuid"
+            class="text-lg"
+          >
+            {{ category_form.name }}
+          </option>
+        </select>
       </div>
       <div class="flex">
         <button
@@ -87,6 +123,20 @@
       </div>
     </div>
   </div>
+  <div v-show="showCancelConfirm">
+    <PopUpModal
+      iconType="info"
+      :cancelButton="true"
+      message="This post has not yet been saved. Do you want to save and exit?"
+      positiveMessage="Exit without saving"
+      negativeMessage="Save and exit"
+      positiveColor="gray"
+      negativeColor="blue"
+      @positive="cancelConfirmed"
+      @negative="saveAndCancel"
+      @cancel="hideCancelModal"
+    />
+  </div>
 </template>
 
 <script setup>
@@ -97,6 +147,7 @@ import mdHelper from "@/js/helpers/mdHelper";
 import postFetcher from "@/js/fetchers/postFetcher";
 import AlertIndicate from "@/components/parts/AlertIndicate.vue";
 import LoadingSpinner from "@/components/parts/LoadingSpinner.vue";
+import PopUpModal from "@/components/parts/PopUpModal.vue";
 import VueMarkdownIt from "vue3-markdown-it";
 import HelpCircleOutline from "vue-material-design-icons/HelpCircleOutline.vue";
 
@@ -107,10 +158,14 @@ const { replacePlainToMd } = mdHelper();
 const store = useStore();
 const router = useRouter();
 
+const ulid = ref(null);
 const title = ref("");
 const content = ref("");
+const category = ref(null);
 const is_draft = ref(false);
 const is_publish = ref(false);
+
+const categories = ref(false);
 
 const height = ref();
 const area = ref(null);
@@ -158,15 +213,17 @@ const replacedContent = computed(() => {
   return replacePlainToMd(content.value);
 });
 
-watch([title, content], () => {
+watch([title, content, category], () => {
   isSaved.value = false;
   registerPostData_toVuex();
 });
 
 const registerPostData_toVuex = () => {
   const data = {
+    ulid: ulid.value,
     title: title.value,
     content: content.value,
+    category_uuid: category.value,
     is_draft: is_draft.value,
     is_publish: is_publish.value,
   };
@@ -185,14 +242,21 @@ const submit = async (draft, publish) => {
   is_publish.value = publish;
 
   isLoading.value = true;
+  errors.value = [];
 
   registerPostData_toVuex();
-  const { submitPost } = postFetcher();
+  const { submitPost, updatePost } = postFetcher();
 
   try {
-    const response = await submitPost();
-    const result = JSON.parse(JSON.stringify(response));
+    let result;
+    if (ulid.value) {
+      result = await updatePost();
+    } else {
+      result = await submitPost();
+    }
+
     if (result) {
+      ulid.value = result.ulid;
       emit("success", is_draft.value);
 
       if (draft) {
@@ -208,10 +272,24 @@ const submit = async (draft, publish) => {
   isLoading.value = false;
 };
 
+const getCategories = async () => {
+  const { fetchCategories } = postFetcher();
+
+  try {
+    const response = await fetchCategories();
+    categories.value = JSON.parse(JSON.stringify(response));
+  } catch (e) {
+    errors.value = e.response.data.errors;
+  }
+};
+
 const cancel = () => {
-  if (isSaved.value || confirmCancel.value) {
+  if (
+    !isSaved.value &&
+    !confirmCancel.value &&
+    title.value.length + content.value.length
+  ) {
     showCancelConfirm.value = true;
-    // [Todo] キャンセルボタン押下時に`confirmCancel`をtrueにしてもう一度このメソッドを呼び出す
     return;
   }
 
@@ -219,4 +297,21 @@ const cancel = () => {
 
   router.push(router.referrer);
 };
+
+const cancelConfirmed = () => {
+  confirmCancel.value = true;
+  cancel();
+};
+
+const saveAndCancel = () => {
+  submit(true, false);
+  confirmCancel.value = true;
+  cancel();
+};
+
+const hideCancelModal = () => {
+  showCancelConfirm.value = false;
+};
+
+getCategories();
 </script>

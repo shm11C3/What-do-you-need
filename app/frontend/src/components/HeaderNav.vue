@@ -22,10 +22,10 @@
             Home
           </router-link>
           <router-link
-            to=""
+            to="/post/create"
             class="block mt-4 lg:inline-block lg:mt-0 text-gray-100 hover:text-white mr-4"
           >
-            コンテンツ名
+            Write Post
           </router-link>
           <router-link
             to="/"
