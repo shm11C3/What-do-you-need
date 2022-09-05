@@ -17,6 +17,13 @@
           type="text"
           placeholder="Title"
         />
+        <div
+          v-show="showRequireErrors || titleValidationErrors"
+          v-for="error in titleValidationErrors.concat(titleRequired)"
+          :key="error"
+        >
+          <p class="text-red-600">{{ error }}</p>
+        </div>
       </div>
       <div class="mb-4">
         <label
@@ -45,6 +52,13 @@
             {{ category_form.name }}
           </option>
         </select>
+        <div
+          v-show="showRequireErrors"
+          v-for="error in categoryValidationErrors"
+          :key="error"
+        >
+          <p class="text-red-600">{{ error }}</p>
+        </div>
       </div>
       <div class="flex">
         <button
@@ -67,7 +81,7 @@
         </button>
       </div>
       <div
-        class="mb-4 w-full bg-gray-50 rounded-lg border border-gray-200 dark:bg-gray-700 dark:border-gray-600"
+        class="w-full bg-gray-50 rounded-lg border border-gray-200 dark:bg-gray-700 dark:border-gray-600"
       >
         <div v-show="!preview">
           <div class="py-2 px-4 bg-white rounded-lg dark:bg-gray-800">
@@ -90,6 +104,13 @@
           <vue-markdown-it class="md-container" :source="replacedContent" />
         </div>
       </div>
+      <div
+        v-show="showRequireErrors || contentValidationErrors"
+        v-for="error in contentValidationErrors.concat(contentRequired)"
+        :key="error"
+      >
+        <p class="text-red-600">{{ error }}</p>
+      </div>
       <div v-for="error in errors" :key="error">
         <AlertIndicate
           class="my-2"
@@ -98,7 +119,7 @@
           :message="error[0]"
         ></AlertIndicate>
       </div>
-      <div v-show="!isLoading" class="flex flex-row-reverse">
+      <div v-show="!isLoading" class="flex flex-row-reverse mt-4">
         <button
           v-on:click="submit(false, true)"
           class="inline-flex items-center px-5 py-2.5 text-sm font-medium text-center text-white bg-blue-500 rounded-lg focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-900 hover:bg-blue-800"
@@ -108,6 +129,7 @@
         <button
           v-on:click="submit(true, false)"
           class="inline-flex items-center px-5 py-2.5 text-sm font-medium text-center text-white bg-gray-500 rounded-lg focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-900 hover:bg-gray-800 mr-2 ml-auto"
+          v-bind:disabled="!draftAllValid"
         >
           Save Draft
         </button>
@@ -145,6 +167,7 @@ import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import mdHelper from "@/js/helpers/mdHelper";
 import postFetcher from "@/js/fetchers/postFetcher";
+import postValidator from "@/js/validators/postValidator";
 import AlertIndicate from "@/components/parts/AlertIndicate.vue";
 import LoadingSpinner from "@/components/parts/LoadingSpinner.vue";
 import PopUpModal from "@/components/parts/PopUpModal.vue";
@@ -176,11 +199,65 @@ const errors = ref([]);
 const isSaved = ref(false); // Whether saved in DB or not
 const showCancelConfirm = ref(false);
 const confirmCancel = ref(false);
+const showRequireErrors = ref(false);
 
 if (store.getters.form_post) {
   title.value = store.getters.form_post.title;
   content.value = store.getters.form_post.content;
 }
+
+// `is_draft == true`の場合`required`は不要なのでエラーの表示を分割する
+const titleRequired = ref([]);
+const contentRequired = ref([]);
+
+const { validationTitle, validationContent, requireForm } = postValidator();
+
+/**
+ * @return {array}
+ */
+const requireValidationErrors = computed(() => {
+  return requireForm({
+    title: title.value,
+    content: replacedContent.value,
+    category: category.value,
+  });
+});
+
+/**
+ * @return {array}
+ */
+const titleValidationErrors = computed(() => {
+  return validationTitle(title.value);
+});
+
+/**
+ * @return {array}
+ */
+const contentValidationErrors = computed(() => {
+  return validationContent(replacedContent.value);
+});
+
+const categoryValidationErrors = ref([]);
+
+/**
+ * @return {bool}
+ */
+const publishAllValid = computed(() => {
+  return !(
+    titleValidationErrors.value.length +
+    contentValidationErrors.value.length +
+    requireValidationErrors.value.length
+  );
+});
+
+/**
+ * @return {bool}
+ */
+const draftAllValid = computed(() => {
+  return !(
+    titleValidationErrors.value.length + contentValidationErrors.value.length
+  );
+});
 
 /**
  * Adjust `textarea` height
@@ -215,6 +292,8 @@ const replacedContent = computed(() => {
 
 watch([title, content, category], () => {
   isSaved.value = false;
+  showRequireErrors.value = false;
+  addRequireErrors();
   registerPostData_toVuex();
 });
 
@@ -222,13 +301,25 @@ const registerPostData_toVuex = () => {
   const data = {
     ulid: ulid.value,
     title: title.value,
-    content: content.value,
+    content: replacedContent.value,
     category_uuid: category.value,
     is_draft: is_draft.value,
     is_publish: is_publish.value,
   };
 
   store.dispatch("setForm_post", data);
+};
+
+const addRequireErrors = () => {
+  const errors = requireValidationErrors.value;
+
+  titleRequired.value = errors.includes("title") ? ["Title is required"] : [];
+  categoryValidationErrors.value = errors.includes("category")
+    ? ["category is required"]
+    : [];
+  contentRequired.value = errors.includes("content")
+    ? ["Content is required"]
+    : [];
 };
 
 /**
@@ -240,6 +331,12 @@ const registerPostData_toVuex = () => {
 const submit = async (draft, publish) => {
   is_draft.value = draft;
   is_publish.value = publish;
+
+  if (publish && !publishAllValid.value) {
+    showRequireErrors.value = true;
+    addRequireErrors();
+    return;
+  }
 
   isLoading.value = true;
   errors.value = [];
