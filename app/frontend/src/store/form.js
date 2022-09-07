@@ -18,6 +18,9 @@ const form = {
     form_post(state, e) {
       state.post = e;
     },
+    form_post_isSaved(state, e) {
+      state.post.isSaved = e;
+    },
   },
   actions: {
     setForm_userProfile({ commit }, e) {
@@ -25,6 +28,9 @@ const form = {
     },
     setForm_post({ commit }, e) {
       commit("form_post", e);
+    },
+    setForm_post_isSaved({ commit }, e) {
+      commit("form_post_isSaved", e);
     },
   },
 };
