@@ -203,6 +203,10 @@
               />
             </div>
           </div>
+          <IntersectionObserver
+            @observed="addDrafts"
+            :disableObserver="isLoading"
+          />
         </div>
       </div>
     </div>
@@ -236,6 +240,7 @@ import postValidator from "@/js/validators/postValidator";
 import AlertIndicate from "@/components/parts/AlertIndicate.vue";
 import LoadingSpinner from "@/components/parts/LoadingSpinner.vue";
 import PopUpModal from "@/components/parts/PopUpModal.vue";
+import IntersectionObserver from "@/components/parts/IntersectionObserver.vue";
 import VueMarkdownIt from "vue3-markdown-it";
 import HelpCircleOutline from "vue-material-design-icons/HelpCircleOutline.vue";
 
@@ -268,6 +273,7 @@ const showRequireErrors = ref(false);
 const showDraftList = ref(false);
 const draft_list = ref([]);
 const deleteDraftConfirm = ref(false);
+const draft_nextPage = ref(1);
 
 if (store.getters.form_post) {
   title.value = store.getters.form_post.title;
@@ -469,14 +475,26 @@ const getDrafts = async () => {
   isLoading.value = true;
 
   try {
-    const response = await fetchDrafts();
+    const response = await fetchDrafts(draft_nextPage.value);
 
-    draft_list.value = response[0].data;
+    draft_list.value = JSON.parse(JSON.stringify(draft_list.value)).concat(
+      response[0].data
+    );
+
+    draft_nextPage.value = response[0].next_page_url
+      ? response[0].current_page + 1
+      : null;
   } catch (e) {
     errors.value = e.response.data.errors;
   }
 
   isLoading.value = false;
+};
+
+const addDrafts = () => {
+  if (draft_nextPage.value) {
+    getDrafts();
+  }
 };
 
 const cancel = () => {

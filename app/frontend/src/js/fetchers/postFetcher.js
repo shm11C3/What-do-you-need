@@ -104,7 +104,7 @@ export default function () {
    *
    * @returns {Promise}
    */
-  const fetchDrafts = () => {
+  const fetchDrafts = (page) => {
     const idToken = store.getters.idToken;
     return new Promise((resolve, reject) => {
       if (!idToken) {
@@ -114,6 +114,9 @@ export default function () {
         .get("post/drafts", {
           headers: {
             Authorization: `Bearer ${idToken}`,
+          },
+          params: {
+            page: page,
           },
         })
         .then((response) => {
