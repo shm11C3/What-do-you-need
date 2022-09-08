@@ -29,7 +29,7 @@
 <script>
 import UserCard from "@/components/modules/UserCard.vue";
 import UserButton from "@/components/modules/UserButton.vue";
-import PostList from "@/components/modules/PostList.vue";
+import PostList from "@/components/modules/post/PostList.vue";
 import UserProfileForm from "@/components/form/UserProfileForm.vue";
 import UserSetting from "@/components/modules/UserSetting.vue";
 import { useStore } from "vuex";

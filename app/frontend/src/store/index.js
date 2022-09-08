@@ -16,6 +16,7 @@ export default createStore({
         "auth.isAuthenticated",
         "auth.email_verified",
         "auth.userProfile",
+        "form.post",
       ],
       storage: window.window.localStorage,
     }),
