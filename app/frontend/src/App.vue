@@ -16,7 +16,7 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import HeaderNav from "./components/HeaderNav.vue";
 import { useAuth0 } from "@auth0/auth0-vue";
 import { useStore } from "vuex";
@@ -25,110 +25,91 @@ import { useRouter } from "vue-router";
 import userFetcher from "@/js/fetchers/userFetcher";
 import LoadingSpinner from "./components/parts/LoadingSpinner.vue";
 
-export default {
-  components: {
-    HeaderNav,
-    LoadingSpinner,
-  },
+const store = useStore();
+const auth0 = useAuth0();
+const router = useRouter();
 
-  name: "App",
+const isNearingExpirationIdToken = ref(false);
+const idTokenClaims = ref();
 
-  setup() {
-    const store = useStore();
-    const auth0 = useAuth0();
-    const router = useRouter();
+/**
+ * ID Token の Exp を1分毎に検証し期限切れ3分前に`true`を返す
+ */
+setInterval(() => {
+  if (!store.getters.idTokenClaims) {
+    return null;
+  }
 
-    const isNearingExpirationIdToken = ref(false);
-    const idTokenClaims = ref();
+  const now_unix_s = Math.round(new Date().getTime() / 1000);
+  isNearingExpirationIdToken.value =
+    now_unix_s + 180 > store.getters.idTokenExpiration;
+}, 60000);
 
-    /**
-     * ID Token の Exp を1分毎に検証し期限切れ3分前に`true`を返す
-     */
-    setInterval(() => {
-      if (!store.getters.idTokenClaims) {
-        return null;
-      }
+/**
+ * IdTokenがVuexに登録されていない場合に取得する
+ */
+const fetchIdToken = () => {
+  // 認証しているか
+  if (!auth0.isAuthenticated) {
+    return null;
+  }
 
-      const now_unix_s = Math.round(new Date().getTime() / 1000);
-      isNearingExpirationIdToken.value =
-        now_unix_s + 180 > store.getters.idTokenExpiration;
-    }, 60000);
+  let idTokenClaims = store.getters.idTokenClaims;
 
-    /**
-     * IdTokenがVuexに登録されていない場合に取得する
-     */
-    const fetchIdToken = () => {
-      // 認証しているか
-      if (!auth0.isAuthenticated) {
-        return null;
-      }
+  // idTokenがvuexに保存されているか
+  if (!idTokenClaims) {
+    return auth0.idTokenClaims.value;
+  }
 
-      let idTokenClaims = store.getters.idTokenClaims;
-
-      // idTokenがvuexに保存されているか
-      if (!idTokenClaims) {
-        return auth0.idTokenClaims.value;
-      }
-
-      return idTokenClaims;
-    };
-
-    const getUserProfile = async () => {
-      store.dispatch("setUserProfileIsLoading", true);
-
-      const { fetchUserProfile } = userFetcher();
-
-      try {
-        const userProfile = JSON.parse(
-          JSON.stringify(await fetchUserProfile())
-        );
-
-        if (userProfile[1].isExist_userProfile) {
-          store.dispatch("setUserProfile", userProfile[0]);
-        }
-      } catch (e) {
-        console.error(e);
-        store.dispatch("logout");
-      }
-
-      store.dispatch("setUserProfileIsLoading", false);
-    };
-
-    const isLoading = auth0.isLoading;
-
-    // 有効期限に近づいたらリロードさせる
-    watch(isNearingExpirationIdToken, (e) => {
-      if (!e) return;
-      router.go({ path: router.currentRoute.path, force: true });
-    });
-
-    watch(idTokenClaims, (e) => {
-      if (!e) return;
-      store.dispatch("setIdTokenClaims", e);
-      getUserProfile();
-    });
-
-    watch([auth0.isLoading, auth0.isAuthenticated, auth0.user], () => {
-      idTokenClaims.value = fetchIdToken();
-
-      const user = auth0.user.value;
-
-      store.dispatch("setIsAuthenticated", auth0.isAuthenticated);
-
-      if (user != undefined && user.email_verified != undefined) {
-        store.dispatch("setEmail_verified", user.email_verified);
-      }
-    });
-
-    watch(isLoading, (e) => {
-      store.dispatch("setIsLoading", e);
-    });
-
-    return {
-      isNearingExpirationIdToken,
-      idTokenClaims,
-      isLoading,
-    };
-  },
+  return idTokenClaims;
 };
+
+const getUserProfile = async () => {
+  store.dispatch("setUserProfileIsLoading", true);
+
+  const { fetchUserProfile } = userFetcher();
+
+  try {
+    const userProfile = JSON.parse(JSON.stringify(await fetchUserProfile()));
+
+    if (userProfile[1].isExist_userProfile) {
+      store.dispatch("setUserProfile", userProfile[0]);
+    }
+  } catch (e) {
+    console.error(e);
+    store.dispatch("logout");
+  }
+
+  store.dispatch("setUserProfileIsLoading", false);
+};
+
+const isLoading = auth0.isLoading;
+
+// 有効期限に近づいたらリロードさせる
+watch(isNearingExpirationIdToken, (e) => {
+  if (!e) return;
+  router.go({ path: router.currentRoute.path, force: true });
+});
+
+watch(idTokenClaims, (e) => {
+  if (!e) return;
+  store.dispatch("setIdTokenClaims", e);
+  getUserProfile();
+});
+
+watch([auth0.isLoading, auth0.isAuthenticated, auth0.user], () => {
+  idTokenClaims.value = fetchIdToken();
+
+  const user = auth0.user.value;
+
+  store.dispatch("setIsAuthenticated", auth0.isAuthenticated);
+
+  if (user != undefined && user.email_verified != undefined) {
+    store.dispatch("setEmail_verified", user.email_verified);
+  }
+});
+
+watch(isLoading, (e) => {
+  store.dispatch("setIsLoading", e);
+});
 </script>
