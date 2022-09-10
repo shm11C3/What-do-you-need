@@ -275,7 +275,7 @@ const draft_list = ref([]);
 const deleteDraftConfirm = ref(false);
 const draft_nextPage = ref(1);
 
-if (store.getters.form_post) {
+if (store.state.form.post.value) {
   title.value = store.getters.form_post.title;
   content.value = store.getters.form_post.content;
   ulid.value = store.getters.form_post.ulid;

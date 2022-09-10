@@ -2,10 +2,18 @@ const auth = {
   state: {
     isAuthenticated: false,
     email_verified: false,
-    idTokenClaims: null, // idTokenは`vuex-persistedstate`には保存しない
+    idTokenClaims: null,
     userProfile: null,
+    isLoading: true,
+    userProfileIsLoading: false,
   },
   getters: {
+    isLoading(state) {
+      return state.isLoading;
+    },
+    userProfileIsLoading(state) {
+      return state.userProfileIsLoading;
+    },
     isAuthenticated(state) {
       return state.isAuthenticated;
     },
@@ -29,6 +37,12 @@ const auth = {
     },
   },
   mutations: {
+    isLoading(state, e) {
+      state.isLoading = e;
+    },
+    userProfileIsLoading(state, e) {
+      state.userProfileIsLoading = e;
+    },
     isAuthenticated(state, e) {
       state.isAuthenticated = e;
     },
@@ -45,6 +59,12 @@ const auth = {
     },
   },
   actions: {
+    setIsLoading({ commit }, e) {
+      commit("isLoading", e);
+    },
+    setUserProfileIsLoading({ commit }, e) {
+      commit("userProfileIsLoading", e);
+    },
     setIsAuthenticated({ commit }, e) {
       commit("isAuthenticated", e);
     },
@@ -56,11 +76,8 @@ const auth = {
     setIdTokenClaims({ commit }, e) {
       commit("idTokenClaims", e);
     },
-    logout({ commit }) {
-      commit("isAuthenticated", false);
-      commit("email_verified", false);
-      commit("idTokenClaims", null);
-      commit("userProfile", null);
+    logout() {
+      this.reset();
     },
     setUserProfile({ commit }, e) {
       commit("userProfile", e);

@@ -41,10 +41,13 @@
         >
           <div>
             <div v-if="isAuthenticated">
-              <div v-if="userProfile">
-                {{ userProfile.username }}
+              <div v-if="!userProfileIsLoading">
+                <div v-if="userProfile">
+                  {{ userProfile.username }}
+                </div>
+                <div v-else>Name not registered</div>
               </div>
-              <div v-else>Name not registered</div>
+              <div v-else>Loading...</div>
             </div>
             <div v-else>Login</div>
           </div>
@@ -129,10 +132,16 @@ export default {
     const router = useRouter();
 
     const isOpen = ref(false);
-    let isAuthenticated = ref(store.getters.isAuthenticated);
+    const isAuthenticated = computed(() => {
+      return store.getters.isAuthenticated;
+    });
 
     const userProfile = computed(() => {
       return store.getters.userProfile;
+    });
+
+    const userProfileIsLoading = computed(() => {
+      return store.getters.userProfileIsLoading;
     });
 
     return {
@@ -141,7 +150,7 @@ export default {
       },
 
       userModal() {
-        if (this.isAuthenticated) {
+        if (store.getters.isAuthenticated) {
           this.isOpen = !this.isOpen;
         } else {
           router.push("/login");
@@ -149,22 +158,12 @@ export default {
       },
 
       isOpen,
+      userProfileIsLoading,
       isAuthenticated,
       cssSetting: setting,
       userProfile,
       userIsLoading: auth0.isLoading,
     };
-  },
-
-  watch: {
-    $route: function (to, from) {
-      if (
-        from.path.includes("user/redirect/logout") ||
-        from.path.includes("user/redirect/login")
-      ) {
-        this.isAuthenticated = this.$store.getters.isAuthenticated;
-      }
-    },
   },
 };
 </script>

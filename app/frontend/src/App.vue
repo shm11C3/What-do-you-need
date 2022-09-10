@@ -1,13 +1,18 @@
 <template>
   <div>
-    <header>
-      <HeaderNav />
-    </header>
-    <main>
-      <div id="app">
-        <router-view />
-      </div>
-    </main>
+    <div v-show="!isLoading">
+      <header>
+        <HeaderNav />
+      </header>
+      <main>
+        <div id="app">
+          <router-view />
+        </div>
+      </main>
+    </div>
+    <div v-show="isLoading" class="mt-20">
+      <LoadingSpinner />
+    </div>
   </div>
 </template>
 
@@ -17,10 +22,13 @@ import { useAuth0 } from "@auth0/auth0-vue";
 import { useStore } from "vuex";
 import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
+import userFetcher from "@/js/fetchers/userFetcher";
+import LoadingSpinner from "./components/parts/LoadingSpinner.vue";
 
 export default {
   components: {
-    HeaderNav, //読み込む際はここにも追記必要
+    HeaderNav,
+    LoadingSpinner,
   },
 
   name: "App",
@@ -51,7 +59,7 @@ export default {
      */
     const fetchIdToken = () => {
       // 認証しているか
-      if (!store.getters.isAuthenticated) {
+      if (!auth0.isAuthenticated) {
         return null;
       }
 
@@ -59,11 +67,34 @@ export default {
 
       // idTokenがvuexに保存されているか
       if (!idTokenClaims) {
-        return auth0.idTokenClaims;
+        return auth0.idTokenClaims.value;
       }
 
       return idTokenClaims;
     };
+
+    const getUserProfile = async () => {
+      store.dispatch("setUserProfileIsLoading", true);
+
+      const { fetchUserProfile } = userFetcher();
+
+      try {
+        const userProfile = JSON.parse(
+          JSON.stringify(await fetchUserProfile())
+        );
+
+        if (userProfile[1].isExist_userProfile) {
+          store.dispatch("setUserProfile", userProfile[0]);
+        }
+      } catch (e) {
+        console.error(e);
+        store.dispatch("logout");
+      }
+
+      store.dispatch("setUserProfileIsLoading", false);
+    };
+
+    const isLoading = auth0.isLoading;
 
     // 有効期限に近づいたらリロードさせる
     watch(isNearingExpirationIdToken, (e) => {
@@ -73,16 +104,30 @@ export default {
 
     watch(idTokenClaims, (e) => {
       if (!e) return;
-      store.dispatch("setIdTokenClaims", e.value);
+      store.dispatch("setIdTokenClaims", e);
+      getUserProfile();
     });
 
-    watch(auth0.isLoading, () => {
+    watch([auth0.isLoading, auth0.isAuthenticated, auth0.user], () => {
       idTokenClaims.value = fetchIdToken();
+
+      const user = auth0.user.value;
+
+      store.dispatch("setIsAuthenticated", auth0.isAuthenticated);
+
+      if (user != undefined && user.email_verified != undefined) {
+        store.dispatch("setEmail_verified", user.email_verified);
+      }
+    });
+
+    watch(isLoading, (e) => {
+      store.dispatch("setIsLoading", e);
     });
 
     return {
       isNearingExpirationIdToken,
       idTokenClaims,
+      isLoading,
     };
   },
 };
