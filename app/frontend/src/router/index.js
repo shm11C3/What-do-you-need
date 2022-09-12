@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import store from "@/store/index.js";
 
-const privatePages = ["/user/profile", "post/create"];
+const privatePages = ["/user/profile", "/post/create"];
 
 const routes = [
   {

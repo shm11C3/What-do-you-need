@@ -76,8 +76,11 @@ const auth = {
     setIdTokenClaims({ commit }, e) {
       commit("idTokenClaims", e);
     },
-    logout() {
-      this.reset();
+    logout({ commit }) {
+      commit("userProfile", null);
+      commit("isAuthenticated", false);
+      commit("email_verified", false);
+      commit("idTokenClaims", null);
     },
     setUserProfile({ commit }, e) {
       commit("userProfile", e);
