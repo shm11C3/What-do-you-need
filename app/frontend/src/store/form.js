@@ -21,6 +21,10 @@ const form = {
     form_post_isSaved(state, e) {
       state.post.isSaved = e;
     },
+    reset: (state) => {
+      state.userProfile = {};
+      state.post = {};
+    },
   },
   actions: {
     setForm_userProfile({ commit }, e) {

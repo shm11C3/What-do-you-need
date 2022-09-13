@@ -41,10 +41,13 @@
         >
           <div>
             <div v-if="isAuthenticated">
-              <div v-if="userProfile">
-                {{ userProfile.username }}
+              <div v-if="!userProfileIsLoading">
+                <div v-if="userProfile">
+                  {{ userProfile.username }}
+                </div>
+                <div v-else>Name not registered</div>
               </div>
-              <div v-else>Name not registered</div>
+              <div v-else>Loading...</div>
             </div>
             <div v-else>Login</div>
           </div>
@@ -104,9 +107,7 @@
     </div>
   </div>
 </template>
-<script>
-import { setting } from "../js/setting/style";
-import { useAuth0 } from "@auth0/auth0-vue";
+<script setup>
 import { ref, computed } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
@@ -114,57 +115,28 @@ import Close from "vue-material-design-icons/Close.vue";
 import Cog from "vue-material-design-icons/Cog.vue";
 import Logout from "vue-material-design-icons/Logout.vue";
 
-export default {
-  name: "HeaderNav",
+const store = useStore();
+const router = useRouter();
 
-  components: {
-    Close,
-    Cog,
-    Logout,
-  },
+const isOpen = ref(false);
 
-  setup() {
-    const store = useStore();
-    const auth0 = useAuth0();
-    const router = useRouter();
+const isAuthenticated = computed(() => {
+  return store.getters.isAuthenticated;
+});
 
-    const isOpen = ref(false);
-    let isAuthenticated = ref(store.getters.isAuthenticated);
+const userProfile = computed(() => {
+  return store.getters.userProfile;
+});
 
-    const userProfile = computed(() => {
-      return store.getters.userProfile;
-    });
+const userProfileIsLoading = computed(() => {
+  return store.getters.userProfileIsLoading;
+});
 
-    return {
-      logout() {
-        router.push("/logout");
-      },
-
-      userModal() {
-        if (this.isAuthenticated) {
-          this.isOpen = !this.isOpen;
-        } else {
-          router.push("/login");
-        }
-      },
-
-      isOpen,
-      isAuthenticated,
-      cssSetting: setting,
-      userProfile,
-      userIsLoading: auth0.isLoading,
-    };
-  },
-
-  watch: {
-    $route: function (to, from) {
-      if (
-        from.path.includes("user/redirect/logout") ||
-        from.path.includes("user/redirect/login")
-      ) {
-        this.isAuthenticated = this.$store.getters.isAuthenticated;
-      }
-    },
-  },
+const userModal = () => {
+  if (store.getters.isAuthenticated) {
+    isOpen.value = !isOpen.value;
+  } else {
+    router.push("/login");
+  }
 };
 </script>
