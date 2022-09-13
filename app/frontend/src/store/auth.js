@@ -57,6 +57,14 @@ const auth = {
     userProfile(state, e) {
       state.userProfile = e;
     },
+    reset: (state) => {
+      state.userProfile = null;
+      state.isAuthenticated = false;
+      state.email_verified = false;
+      state.idTokenClaims = null;
+      state.isLoading = true;
+      state.userProfileIsLoading = false;
+    },
   },
   actions: {
     setIsLoading({ commit }, e) {
@@ -75,12 +83,6 @@ const auth = {
 
     setIdTokenClaims({ commit }, e) {
       commit("idTokenClaims", e);
-    },
-    logout({ commit }) {
-      commit("userProfile", null);
-      commit("isAuthenticated", false);
-      commit("email_verified", false);
-      commit("idTokenClaims", null);
     },
     setUserProfile({ commit }, e) {
       commit("userProfile", e);

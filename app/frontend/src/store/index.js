@@ -1,13 +1,17 @@
-import Vuex from "vuex";
-import { createStore } from "vuex-extensions";
+import { createStore } from "vuex";
 import auth from "./auth.js";
 import form from "./form.js";
 
-export default createStore(Vuex.Store, {
+export default createStore({
   modules: {
     auth,
     form,
   },
 
-  plugins: [],
+  actions: {
+    logout({ commit }) {
+      commit("auth/reset");
+      commit("form/reset");
+    },
+  },
 });
