@@ -234,6 +234,7 @@
 import { watch, ref, computed, onMounted, nextTick } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
+import { useCookies } from "vue3-cookies";
 import mdHelper from "@/js/helpers/mdHelper";
 import postFetcher from "@/js/fetchers/postFetcher";
 import postValidator from "@/js/validators/postValidator";
@@ -250,6 +251,7 @@ const emit = defineEmits(["success"]);
 const { replacePlainToMd } = mdHelper();
 const store = useStore();
 const router = useRouter();
+const { cookies } = useCookies();
 
 const ulid = ref(null);
 const title = ref("");
@@ -275,12 +277,25 @@ const draft_list = ref([]);
 const deleteDraftConfirm = ref(false);
 const draft_nextPage = ref(1);
 
-if (store.state.form.post.value) {
-  title.value = store.getters.form_post.title;
-  content.value = store.getters.form_post.content;
-  ulid.value = store.getters.form_post.ulid;
-  isSaved.value = store.getters.form_post.isSaved;
-}
+onMounted(() => {
+  if (cookies.isKey("post_form")) {
+    registerFormValue();
+  }
+});
+
+/**
+ * set value from cookie
+ */
+const registerFormValue = () => {
+  const data = cookies.get("post_form");
+
+  title.value = data.title;
+  content.value = data.content;
+  ulid.value = data.ulid;
+  isSaved.value = data.isSaved;
+
+  registerPostData_toVuex();
+};
 
 // `is_draft == true`の場合`required`は不要なのでエラーの表示を分割する
 const titleRequired = ref([]);
@@ -386,6 +401,7 @@ const registerPostData_toVuex = () => {
   };
 
   store.dispatch("setForm_post", data);
+  cookies.set("post_form", data, null, "/post");
 };
 
 const addRequireErrors = () => {
@@ -439,6 +455,7 @@ const submit = async (draft, publish) => {
         store.dispatch("setForm_post_isSaved", isSaved.value);
       } else {
         store.dispatch("setForm_post", null);
+        cookies.remove("post_form");
       }
     }
   } catch (e) {
@@ -508,6 +525,7 @@ const cancel = () => {
   }
 
   store.dispatch("setForm_post", null);
+  cookies.remove("post_form");
 
   router.push(router.referrer);
 };
