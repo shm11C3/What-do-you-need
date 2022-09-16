@@ -1,4 +1,6 @@
 export default function () {
+  const split = require("graphemesplit");
+
   /**
    *
    * @param {str} name
@@ -11,7 +13,7 @@ export default function () {
       result.push("Please enter your name");
     }
 
-    if (name.length > 45) {
+    if (split(name).length > 45) {
       result.push("Name must be 45 characters or less");
     }
 
