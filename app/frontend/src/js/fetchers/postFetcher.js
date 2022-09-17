@@ -81,6 +81,37 @@ export default function () {
   };
 
   /**
+   * GET `/posts`
+   *
+   * @param {int} page
+   * @returns {Promise}
+   */
+  const fetchPosts = (page) => {
+    const authorizationHeader = store.getters.isAuthenticated
+      ? {
+          Authorization: `Bearer ${store.getters.idToken}`,
+        }
+      : {};
+
+    return new Promise((resolve, reject) => {
+      axios
+        .get("posts", {
+          headers: authorizationHeader,
+          params: {
+            page: page,
+          },
+        })
+        .then((response) => {
+          resolve(response.data);
+        })
+        .catch((error) => {
+          console.error(error);
+          reject(error);
+        });
+    });
+  };
+
+  /**
    * GET `/categories`
    *
    * @return {Promise}
@@ -161,11 +192,45 @@ export default function () {
     });
   };
 
+  /**
+   * GET `/{username}/posts`
+   *
+   * @param {string} username
+   * @param {int} page
+   * @returns {Promise}
+   */
+  const fetchUserPosts = (username, page) => {
+    const authorizationHeader = store.getters.isAuthenticated
+      ? {
+          Authorization: `Bearer ${store.getters.idToken}`,
+        }
+      : {};
+
+    return new Promise((resolve, reject) => {
+      axios
+        .get(`${username}/posts`, {
+          headers: authorizationHeader,
+          params: {
+            page: page,
+          },
+        })
+        .then((response) => {
+          resolve(response.data);
+        })
+        .catch((error) => {
+          console.error(error);
+          reject(error);
+        });
+    });
+  };
+
   return {
     submitPost,
     updatePost,
+    fetchPosts,
     fetchCategories,
     fetchDrafts,
     deletePost,
+    fetchUserPosts,
   };
 }
