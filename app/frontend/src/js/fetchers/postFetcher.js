@@ -192,6 +192,38 @@ export default function () {
     });
   };
 
+  /**
+   * GET `/{username}/posts`
+   *
+   * @param {string} username
+   * @param {int} page
+   * @returns {Promise}
+   */
+  const fetchUserPosts = (username, page) => {
+    const authorizationHeader = store.getters.isAuthenticated
+      ? {
+          Authorization: `Bearer ${store.getters.idToken}`,
+        }
+      : {};
+
+    return new Promise((resolve, reject) => {
+      axios
+        .get(`${username}/posts`, {
+          headers: authorizationHeader,
+          params: {
+            page: page,
+          },
+        })
+        .then((response) => {
+          resolve(response.data);
+        })
+        .catch((error) => {
+          console.error(error);
+          reject(error);
+        });
+    });
+  };
+
   return {
     submitPost,
     updatePost,
@@ -199,5 +231,6 @@ export default function () {
     fetchCategories,
     fetchDrafts,
     deletePost,
+    fetchUserPosts,
   };
 }
