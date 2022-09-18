@@ -20,7 +20,7 @@
 import HeaderNav from "./components/HeaderNav.vue";
 import { useAuth0 } from "@auth0/auth0-vue";
 import { useStore } from "vuex";
-import { onMounted, ref, watch } from "vue";
+import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import userFetcher from "@/js/fetchers/userFetcher";
 import LoadingSpinner from "./components/parts/LoadingSpinner.vue";
@@ -34,9 +34,6 @@ const { cookies } = useCookies();
 const isNearingExpirationIdToken = ref(false);
 const idTokenClaims = ref();
 
-onMounted(() => {
-  setAuthStatus_toVuex_fromCookies();
-});
 /**
  * ID Token の Exp を1分毎に検証し期限切れ3分前に`true`を返す
  */
@@ -171,4 +168,6 @@ watch([auth0.isLoading, auth0.isAuthenticated, auth0.user], () => {
 watch(isLoading, (e) => {
   store.dispatch("setIsLoading", e);
 });
+
+setAuthStatus_toVuex_fromCookies();
 </script>
