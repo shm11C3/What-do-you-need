@@ -9,7 +9,7 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted, computed, watch } from "vue";
+import { ref, computed, watch } from "vue";
 import PostList from "@/components/modules/post/PostList.vue";
 import postFetcher from "@/js/fetchers/postFetcher";
 import { useStore } from "vuex";
@@ -23,13 +23,6 @@ const isLoading = ref(false);
 
 const idTokenClaims = computed(() => {
   return store.getters.idTokenClaims;
-});
-
-onMounted(() => {
-  // 認証していない場合はそのまま投稿リストを取得、認証済みの場合はidTokenの取得をした後にpostを取得
-  if (!store.getters.isAuthenticated) {
-    getPosts();
-  }
 });
 
 watch(idTokenClaims, () => {
@@ -56,6 +49,11 @@ const getPosts = async () => {
 
   isLoading.value = false;
 };
+
+// 認証していない場合はそのまま投稿リストを取得、認証済みの場合はidTokenの取得をした後にpostを取得
+if (!store.getters.isAuthenticated) {
+  getPosts();
+}
 
 const addPosts = () => {
   if (nextPage.value) {

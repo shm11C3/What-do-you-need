@@ -70,6 +70,11 @@ const routes = [
     name: "createPost",
     component: () => import("../views/post/NewPostSubmit.vue"),
   },
+  {
+    path: "/post/:ulid",
+    name: "postDetail",
+    component: () => import("../views/post/PostDetail.vue"),
+  },
 ];
 
 const router = createRouter({

@@ -112,6 +112,34 @@ export default function () {
   };
 
   /**
+   * GET `/post/{ulid}`
+   *
+   * @param {string} ulid
+   * @returns {Promise}
+   */
+  const fetchPost = (ulid) => {
+    const authorizationHeader = store.getters.isAuthenticated
+      ? {
+          Authorization: `Bearer ${store.getters.idToken}`,
+        }
+      : {};
+
+    return new Promise((resolve, reject) => {
+      axios
+        .get(`post/${ulid}`, {
+          headers: authorizationHeader,
+        })
+        .then((response) => {
+          resolve(response.data);
+        })
+        .catch((error) => {
+          console.error(error);
+          reject(error);
+        });
+    });
+  };
+
+  /**
    * GET `/categories`
    *
    * @return {Promise}
@@ -228,6 +256,7 @@ export default function () {
     submitPost,
     updatePost,
     fetchPosts,
+    fetchPost,
     fetchCategories,
     fetchDrafts,
     deletePost,
