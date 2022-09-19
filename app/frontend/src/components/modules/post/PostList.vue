@@ -14,7 +14,10 @@
             </div>
           </div>
         </button>
-        <button class="w-full text-left hover:bg-blue-50 pl-4">
+        <button
+          v-on:click="toDetail(post.ulid)"
+          class="w-full text-left hover:bg-blue-50 pl-4"
+        >
           <p class="text-xl pt-4 font-bold border-b-2 border-gray-300">
             {{ post.title }}
           </p>
@@ -33,6 +36,9 @@
 <script setup>
 import IntersectionObserver from "@/components/parts/IntersectionObserver.vue";
 import LoadingSpinner from "@/components/parts/LoadingSpinner.vue";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 // eslint-disable-next-line no-undef
 const props = defineProps({
@@ -45,5 +51,9 @@ const emit = defineEmits(["addPosts"]);
 
 const addPosts = () => {
   emit("addPosts");
+};
+
+const toDetail = (ulid) => {
+  router.push(`/post/${ulid}`);
 };
 </script>
