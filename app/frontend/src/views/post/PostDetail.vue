@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="lg:flex justify-center my-10 px-2">
-      <div v-show="!isLoading" class="lg:w-6/12">
+      <div v-show="!isLoading && http_status == 200" class="lg:w-6/12">
         <div class="rounded-lg bg-gray-50 border mt-4 shadow-lg">
           <span
             class="bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800 ml-1"
@@ -29,6 +29,7 @@
       </div>
     </div>
     <LoadingSpinner :size="28" v-show="isLoading" />
+    <NotFound v-show="http_status == 404" />
   </div>
 </template>
 <script setup>
@@ -39,12 +40,15 @@ import { useStore } from "vuex";
 import { useRoute } from "vue-router";
 import LoadingSpinner from "@/components/parts/LoadingSpinner.vue";
 import VueMarkdownIt from "vue3-markdown-it";
+import NotFound from "../error/NotFound.vue";
 
 const route = useRoute();
 const { isUlid } = helper();
 const post = ref([]);
 const isLoading = ref(false);
 const error = ref([]);
+const http_status = ref(200);
+
 const store = useStore();
 
 // watch id_token in store
@@ -59,15 +63,16 @@ watch(
 
 const initial = () => {
   isLoading.value = true;
-  validationParam();
+
+  if (!isUlid(route.params.ulid)) {
+    // show 404
+    http_status.value = 404;
+    isLoading.value = false;
+    return;
+  }
+
   if (!store.getters.isAuthenticated || store.getters.idTokenClaims) {
     getPost();
-  }
-};
-
-const validationParam = () => {
-  if (!isUlid(route.params.ulid)) {
-    // todo 404ページを表示する
   }
 };
 
@@ -78,7 +83,7 @@ const getPost = async () => {
     const response = await fetchPost(route.params.ulid);
     post.value = response[0];
   } catch (e) {
-    // todo apiのレスポンスが404だった場合はフロント側でも404を表示する
+    http_status.value = e.response.status;
     error.value = "An unexpected error has occurred.";
   }
 
