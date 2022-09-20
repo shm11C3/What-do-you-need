@@ -1,15 +1,13 @@
 <template>
   <div>
-    <div v-show="!isLoading">
-      <header>
-        <HeaderNav />
-      </header>
-      <main>
-        <div id="app">
-          <router-view />
-        </div>
-      </main>
-    </div>
+    <header>
+      <HeaderNav />
+    </header>
+    <main>
+      <div id="app">
+        <router-view v-show="!isLoading" />
+      </div>
+    </main>
     <div v-show="isLoading" class="mt-20">
       <LoadingSpinner />
     </div>

@@ -71,6 +71,7 @@
               <!--プロフィールカード-->
               <div class="flex items-center justify-between">
                 <router-link
+                  v-on:click.prevent="userModal"
                   to="/user/profile"
                   class="block p-6 max-w-sm bg-white rounded-lg border border-gray-200 shadow-md hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700 w-64"
                 >
@@ -87,6 +88,7 @@
               </div>
               <div class="mt-4 hover:bg-gray-100">
                 <router-link
+                  v-on:click.prevent="userModal"
                   to="/user/profile#setting"
                   class="flex items-center py-2 w-full"
                 >
