@@ -75,6 +75,11 @@ const routes = [
     name: "postDetail",
     component: () => import("../views/post/PostDetail.vue"),
   },
+  {
+    path: "/:pathMatch(.*)*",
+    name: "notFound",
+    component: () => import("../views/error/NotFound.vue"),
+  },
 ];
 
 const router = createRouter({
