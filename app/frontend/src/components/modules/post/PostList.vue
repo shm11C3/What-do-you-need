@@ -2,7 +2,10 @@
   <div>
     <div v-for="post in props.posts" :key="post">
       <div class="rounded-lg bg-gray-50 border mt-4 shadow-lg">
-        <button class="w-full text-left hover:bg-blue-50 pl-4">
+        <button
+          @click="toUser(post.username)"
+          class="w-full text-left hover:bg-blue-50 pl-4"
+        >
           <div class="flex my-2">
             <img
               class="rounded-full"
@@ -55,5 +58,9 @@ const addPosts = () => {
 
 const toDetail = (ulid) => {
   router.push(`/post/${ulid}`);
+};
+
+const toUser = (username) => {
+  router.push(`/user/detail/${username}`);
 };
 </script>

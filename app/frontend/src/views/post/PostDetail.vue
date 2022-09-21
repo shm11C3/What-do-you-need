@@ -7,7 +7,10 @@
             class="bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800 ml-1"
             >{{ post.category_name }}</span
           >
-          <button class="w-full text-left hover:bg-blue-50 pl-4">
+          <button
+            @click="toUser(post.username)"
+            class="w-full text-left hover:bg-blue-50 pl-4"
+          >
             <div class="flex my-2">
               <img
                 class="rounded-full"
@@ -37,12 +40,13 @@ import { ref, watch, computed } from "vue";
 import postFetcher from "@/js/fetchers/postFetcher";
 import helper from "@/js/helpers/helper";
 import { useStore } from "vuex";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import LoadingSpinner from "@/components/parts/LoadingSpinner.vue";
 import VueMarkdownIt from "vue3-markdown-it";
 import NotFound from "../error/NotFound.vue";
 
 const route = useRoute();
+const router = useRouter();
 const { isUlid } = helper();
 const post = ref([]);
 const isLoading = ref(false);
@@ -50,6 +54,10 @@ const error = ref([]);
 const http_status = ref(200);
 
 const store = useStore();
+
+const toUser = (username) => {
+  router.push(`/user/detail/${username}`);
+};
 
 // watch id_token in store
 watch(

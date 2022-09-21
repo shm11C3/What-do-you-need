@@ -38,7 +38,7 @@ export default {
   props: {
     showName: { type: String, default: "No data" },
     username: { type: String, default: "No data" },
-    country_id: { type: Number, default: null },
+    country_id: { type: Number, default: 0 },
     country_name: { type: String, default: "No data" },
   },
   setup(props) {
