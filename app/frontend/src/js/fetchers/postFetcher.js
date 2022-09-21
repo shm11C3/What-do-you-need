@@ -227,12 +227,13 @@ export default function () {
    * @param {int} page
    * @returns {Promise}
    */
-  const fetchUserPosts = (username, page) => {
-    const authorizationHeader = store.getters.isAuthenticated
-      ? {
-          Authorization: `Bearer ${store.getters.idToken}`,
-        }
-      : {};
+  const fetchUserPosts = (username, page, auth = true) => {
+    const authorizationHeader =
+      store.getters.isAuthenticated && auth
+        ? {
+            Authorization: `Bearer ${store.getters.idToken}`,
+          }
+        : {};
 
     return new Promise((resolve, reject) => {
       axios

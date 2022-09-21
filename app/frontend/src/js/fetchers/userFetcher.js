@@ -159,6 +159,35 @@ export default function () {
     });
   };
 
+  /**
+   * GET `/user/get/{username}`
+   *
+   * @param {string} username
+   * @return {Promise}
+   */
+  const fetchUserProfileByUsername = (username, auth = false) => {
+    const authorizationHeader =
+      store.getters.isAuthenticated && auth
+        ? {
+            Authorization: `Bearer ${store.getters.idToken}`,
+          }
+        : {};
+
+    return new Promise((resolve, reject) => {
+      axios
+        .get(`user/get/${username}`, {
+          headers: authorizationHeader,
+        })
+        .then((response) => {
+          resolve(response.data);
+        })
+        .catch((error) => {
+          console.error(error);
+          reject(error);
+        });
+    });
+  };
+
   return {
     fetchUserProfile,
     postUserProfile,
@@ -166,5 +195,6 @@ export default function () {
     deleteAccount,
     fetchDuplicateUsername_exists,
     requestPasswordReset,
+    fetchUserProfileByUsername,
   };
 }
