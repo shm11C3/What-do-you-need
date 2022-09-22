@@ -188,6 +188,35 @@ export default function () {
     });
   };
 
+  /**
+   * 検証メールの再送信をリクエストする
+   *
+   * @returns { Promise }
+   */
+  const postResendVerificationEmailRequest = () => {
+    const idToken = store.getters.idToken;
+
+    return new Promise((resolve, reject) => {
+      if (!idToken) {
+        reject("ID Token is not registered.");
+      }
+
+      axios
+        .post("/auth/resend-verification-email", null, {
+          headers: {
+            Authorization: `Bearer ${idToken}`,
+          },
+        })
+        .then(function (response) {
+          resolve(response);
+        })
+        .catch(function (error) {
+          console.error(error);
+          reject(error);
+        });
+    });
+  };
+
   return {
     fetchUserProfile,
     postUserProfile,
@@ -196,5 +225,6 @@ export default function () {
     fetchDuplicateUsername_exists,
     requestPasswordReset,
     fetchUserProfileByUsername,
+    postResendVerificationEmailRequest,
   };
 }
