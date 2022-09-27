@@ -13,26 +13,28 @@
           ここにアイコンを設置する
         </button>-->
       </div>
-      <div class="w-full block flex-grow lg:flex lg:items-center lg:w-auto">
-        <div class="text-sm lg:flex-grow">
+      <div class="w-full flex-grow flex lg:items-center lg:w-auto">
+        <div class="flex text-sm flex-grow">
           <router-link
             to="/"
-            class="block mt-4 lg:inline-block lg:mt-0 text-gray-100 hover:text-white mr-4"
+            class="flex mt-4 lg:mt-0 text-gray-100 hover:text-white mr-4"
           >
+            <Home :size="20" class="mr-1" />
             Home
           </router-link>
           <router-link
             to="/post/create"
-            class="block mt-4 lg:inline-block lg:mt-0 text-gray-100 hover:text-white mr-4"
+            class="flex mt-4 lg:inline-flex lg:mt-0 text-gray-100 hover:text-white mr-4"
           >
+            <PencilBox :size="20" class="mr-1" />
             Write Post
           </router-link>
-          <router-link
+          <!--<router-link
             to="/"
             class="block mt-4 lg:inline-block lg:mt-0 text-gray-100 hover:text-white"
           >
-            コンテンツ名
-          </router-link>
+            Search
+          </router-link>-->
         </div>
         <button
           type="button"
@@ -116,6 +118,8 @@ import { useRouter } from "vue-router";
 import Close from "vue-material-design-icons/Close.vue";
 import Cog from "vue-material-design-icons/Cog.vue";
 import Logout from "vue-material-design-icons/Logout.vue";
+import PencilBox from "vue-material-design-icons/PencilBox.vue";
+import Home from "vue-material-design-icons/Home.vue";
 
 const store = useStore();
 const router = useRouter();
