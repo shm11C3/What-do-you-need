@@ -11,6 +11,9 @@
     <div v-show="isLoading" class="mt-20">
       <LoadingSpinner />
     </div>
+    <div v-show="store.getters.isAuthenticated">
+      <BottomPostButton />
+    </div>
   </div>
 </template>
 
@@ -23,6 +26,7 @@ import { useRouter } from "vue-router";
 import userFetcher from "@/js/fetchers/userFetcher";
 import LoadingSpinner from "./components/parts/LoadingSpinner.vue";
 import { useCookies } from "vue3-cookies";
+import BottomPostButton from "./components/BottomPostButton.vue";
 
 const store = useStore();
 const auth0 = useAuth0();
