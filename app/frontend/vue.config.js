@@ -7,4 +7,10 @@ module.exports = defineConfig({
     port: "8083",
     allowedHosts: process.env.VUE_APP_HOSTNAME,
   },
+  pages: {
+    index: {
+      entry: "src/main.js",
+      title: "What do you want?",
+    },
+  },
 });

@@ -14,6 +14,7 @@
     <div v-show="store.getters.isAuthenticated">
       <BottomPostButton />
     </div>
+    <SetTitle />
   </div>
 </template>
 
@@ -27,6 +28,7 @@ import userFetcher from "@/js/fetchers/userFetcher";
 import LoadingSpinner from "./components/parts/LoadingSpinner.vue";
 import { useCookies } from "vue3-cookies";
 import BottomPostButton from "./components/BottomPostButton.vue";
+import SetTitle from "./components/modules/utility/SetTitle.vue";
 
 const store = useStore();
 const auth0 = useAuth0();
