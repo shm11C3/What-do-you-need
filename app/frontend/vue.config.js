@@ -10,7 +10,7 @@ module.exports = defineConfig({
   pages: {
     index: {
       entry: "src/main.js",
-      title: "What do you want?",
+      title: "What do you need?",
     },
   },
 });

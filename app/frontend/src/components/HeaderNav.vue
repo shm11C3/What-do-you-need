@@ -3,7 +3,7 @@
     <nav class="flex items-center justify-between flex-wrap p-5 bg-blue-500">
       <div class="flex items-center flex-shrink-0 text-white mr-6">
         <router-link to="/" class="font-semibold text-xl tracking-tight"
-          >What do you want?</router-link
+          >What do you need?</router-link
         >
       </div>
       <div class="block lg:hidden">
