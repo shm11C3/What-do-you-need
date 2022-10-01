@@ -38,6 +38,11 @@ const { cookies } = useCookies();
 const isNearingExpirationIdToken = ref(false);
 const idTokenClaims = ref();
 
+store.dispatch(
+  "setDefaultUserUri",
+  process.env.VUE_APP_ROOT_IMG + process.env.VUE_APP_DEFAULT_USER_IMG
+);
+
 /**
  * ID Token の Exp を1分毎に検証し期限切れ3分前に`true`を返す
  */

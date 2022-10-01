@@ -14,7 +14,8 @@
             <div class="flex my-2">
               <img
                 class="rounded-full"
-                src="https://via.placeholder.com/60x60x/"
+                width="60"
+                :src="post.profile_img_uri ?? store.getters.defaultUserUri"
               />
               <div class="mt-2 ml-1">
                 <p class="text-md">@{{ post.username }}</p>

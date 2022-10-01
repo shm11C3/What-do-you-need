@@ -9,7 +9,8 @@
           <div class="flex my-2">
             <img
               class="rounded-full"
-              src="https://via.placeholder.com/60x60x/"
+              width="60"
+              :src="post.profile_img_uri ?? store.getters.defaultUserUri"
             />
             <div class="mt-2 ml-1">
               <p class="text-md">@{{ post.username }}</p>
@@ -40,8 +41,10 @@
 import IntersectionObserver from "@/components/parts/IntersectionObserver.vue";
 import LoadingSpinner from "@/components/parts/LoadingSpinner.vue";
 import { useRouter } from "vue-router";
+import { useStore } from "vuex";
 
 const router = useRouter();
+const store = useStore();
 
 // eslint-disable-next-line no-undef
 const props = defineProps({
