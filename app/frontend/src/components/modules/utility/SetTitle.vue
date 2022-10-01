@@ -19,6 +19,6 @@ watch(title, (e) => {
   } else {
     e = `- ${e}`;
   }
-  document.title = `What do you want? ${e}`;
+  document.title = `What do you need? ${e}`;
 });
 </script>
