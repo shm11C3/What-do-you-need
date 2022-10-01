@@ -42,7 +42,7 @@ jobs:
       - name: env verification
         run : cat app/frontend/.env | wc -l
 #        if: cat app/frontend/.env.example | wc -l != cat app/frontend/.env | wc -l
-        run: exit 1
+        #run: exit 1
 
       - name: Building app
         run: |
