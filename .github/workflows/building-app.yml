@@ -41,7 +41,7 @@ jobs:
 
       - name: env verification
         env:
-          ENV_LINES: echo "cat app/frontend/.env | wc -l"
+          ENV_LINES: cat app/frontend/.env | wc -l
         run : |
           echo "$ENV_LINES"
 
