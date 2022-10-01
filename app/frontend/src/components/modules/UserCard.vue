@@ -3,7 +3,11 @@
     class="lg:flex flex-col lg:flex-row block bg-gray-700 shadow-xl rounded-3xl lg:h-28 h-56 mx-3"
   >
     <div class="inline-block items-center m-4">
-      <img class="rounded-full" src="https://via.placeholder.com/80x80x/" />
+      <img
+        class="rounded-full"
+        width="80"
+        :src="profile_img_uri ?? store.getters.defaultUserUri"
+      />
     </div>
     <div class="flex-auto flex">
       <div class="my-6 pl-3 flex-grow lg:w-auto">
@@ -29,6 +33,7 @@
 import { computed, ref } from "vue";
 import CountryFlag from "vue-country-flag-next";
 import country from "../../js/consts/county";
+import { useStore } from "vuex";
 
 export default {
   name: "UserProfileCard",
@@ -40,8 +45,11 @@ export default {
     username: { type: String, default: "No data" },
     country_id: { type: Number, default: 0 },
     country_name: { type: String, default: "No data" },
+    profile_img_uri: { type: String, default: null },
   },
   setup(props) {
+    const store = useStore();
+
     const { country_code_list } = country();
 
     const showCountryName = ref(false);
@@ -55,6 +63,7 @@ export default {
     };
 
     return {
+      store,
       changeCountryView,
       country_code,
       showCountryName,

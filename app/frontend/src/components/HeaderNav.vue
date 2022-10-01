@@ -37,22 +37,31 @@
           </router-link>-->
         </div>
         <button
+          v-show="!(isAuthenticated && !userProfileIsLoading)"
           type="button"
           @click="userModal"
           class="inline-block items-center h-8 text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-gray-100 hover:bg-white mt-4 lg:mt-0"
         >
           <div>
-            <div v-if="isAuthenticated">
-              <div v-if="!userProfileIsLoading">
-                <div v-if="userProfile">
-                  {{ userProfile.username }}
-                </div>
-                <div v-else>Name not registered</div>
-              </div>
-              <div v-else>Loading...</div>
+            <div>
+              <div v-show="userProfileIsLoading">Loading...</div>
             </div>
-            <div v-else>Login</div>
+            <div v-show="!isAuthenticated">Login</div>
           </div>
+        </button>
+        <button
+          v-show="isAuthenticated && !userProfileIsLoading"
+          type="button"
+          @click="userModal"
+          width="30"
+          height="30"
+        >
+          <img
+            class="rounded-full border border-white hover:border-cyan-200"
+            width="36"
+            height="36"
+            :src="userProfile?.profile_img_uri ?? store.getters.defaultUserUri"
+          />
         </button>
       </div>
     </nav>
@@ -77,14 +86,30 @@
                   to="/user/profile"
                   class="block p-6 max-w-sm bg-white rounded-lg border border-gray-200 shadow-md hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700 w-64"
                 >
-                  <!--Vuexから取得したプロフィール画像を表示-->
                   <h5
                     class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
                   >
-                    <div v-if="isAuthenticated && userProfile">
-                      {{ userProfile.username }}
+                    <div v-if="isAuthenticated && userProfile" class="flex">
+                      <img
+                        class="rounded-full mr-1"
+                        width="32"
+                        height="32"
+                        :src="
+                          userProfile?.profile_img_uri ??
+                          store.getters.defaultUserUri
+                        "
+                      />
+                      <span>{{ userProfile.username }}</span>
                     </div>
-                    <div v-else>Name not registered</div>
+                    <div v-else class="flex">
+                      <img
+                        class="rounded-full mr-1"
+                        width="32"
+                        height="32"
+                        :src="store.getters.defaultUserUri"
+                      />
+                      <span>not registered</span>
+                    </div>
                   </h5>
                 </router-link>
               </div>

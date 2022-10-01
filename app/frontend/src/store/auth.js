@@ -6,6 +6,7 @@ const auth = {
     userProfile: null,
     isLoading: true,
     userProfileIsLoading: false,
+    defaultUserUri: "",
   },
   getters: {
     isLoading(state) {
@@ -34,6 +35,9 @@ const auth = {
     },
     auth_id(state) {
       return state.idTokenClaims.sub;
+    },
+    defaultUserUri(state) {
+      return state.defaultUserUri;
     },
   },
   mutations: {
@@ -65,6 +69,9 @@ const auth = {
       state.isLoading = true;
       state.userProfileIsLoading = false;
     },
+    defaultUserUri(state, e) {
+      state.defaultUserUri = e;
+    },
   },
   actions: {
     setIsLoading({ commit }, e) {
@@ -89,6 +96,9 @@ const auth = {
     },
     removeUserProfile({ commit }) {
       commit("userProfile", null);
+    },
+    setDefaultUserUri({ commit }, e) {
+      commit("defaultUserUri", e);
     },
   },
 };
