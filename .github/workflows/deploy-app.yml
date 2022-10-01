@@ -35,7 +35,9 @@ jobs:
           VUE_APP_REDIRECT_URL=${{ secrets.VUE_APP_REDIRECT_URL }}
           VUE_APP_AUTH0_DOMAIN=${{ secrets.VUE_APP_AUTH0_DOMAIN }}
           VUE_APP_AUTH0_CLIENT_ID=${{ secrets.VUE_APP_AUTH0_CLIENT_ID }}
-          VUE_APP_INQUIRY_SRC=${{ secrets.VUE_APP_INQUIRY_SRC }}" >> .env
+          VUE_APP_INQUIRY_SRC=${{ secrets.VUE_APP_INQUIRY_SRC }}
+          VUE_APP_ROOT_IMG=${{ secrets.VUE_APP_ROOT_IMG }}
+          VUE_APP_DEFAULT_USER_IMG_PATH=${{ secrets.VUE_APP_DEFAULT_USER_IMG_PATH }}" >> .env
 
       - name: Building app
         run: |
