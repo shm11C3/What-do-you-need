@@ -41,7 +41,7 @@ jobs:
 
       - name: env verification
         run : |
-          ENV_LINES=cat app/frontend/.env | wc -l >> $GITHUB_ENV
+          ENV_LINES=sudo cat app/frontend/.env | wc -l >> $GITHUB_ENV
           echo "$ENV_LINES"
 
 #        if: cat app/frontend/.env.example | wc -l != cat app/frontend/.env | wc -l
