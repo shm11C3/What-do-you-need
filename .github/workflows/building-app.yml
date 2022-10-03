@@ -39,8 +39,11 @@ jobs:
           VUE_APP_ROOT_IMG=${{ secrets.VUE_APP_ROOT_IMG }}
           VUE_APP_DEFAULT_USER_IMG_PATH=${{ secrets.VUE_APP_DEFAULT_USER_IMG_PATH }}" >> .env
 
+      - name: Get number of lines in env file
+        run: ENV_EXAMPLE_LINES=$(wc -l app/frontend/.env.example) >> $GITHUB_ENV
+
       - name: env verification
-        if: wc -l app/frontend/.env.example == "10 app/frontend/.env.example"
+        if: ${ env.ENV_EXAMPLE_LINES } == "10 app/frontend/.env.example"
         run : exit 1
 
 #        if: cat app/frontend/.env.example | wc -l != cat app/frontend/.env | wc -l
