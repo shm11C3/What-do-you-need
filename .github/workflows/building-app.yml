@@ -40,7 +40,7 @@ jobs:
           VUE_APP_DEFAULT_USER_IMG_PATH=${{ secrets.VUE_APP_DEFAULT_USER_IMG_PATH }}" >> .env
 
       - name: env verification
-        if: true
+        if: wc -l app/frontend/.env.example == "10 app/frontend/.env.example"
         run : exit 1
 
 #        if: cat app/frontend/.env.example | wc -l != cat app/frontend/.env | wc -l
