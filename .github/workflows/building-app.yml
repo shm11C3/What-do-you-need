@@ -45,7 +45,7 @@ jobs:
       - name: env verification
         #if:  == "10 app/frontend/.env.example"
         run : |
-          ${ env.ENV_EXAMPLE_LINES }
+          echo ${ env.ENV_EXAMPLE_LINES }
           exit 1
 
 #        if: cat app/frontend/.env.example | wc -l != cat app/frontend/.env | wc -l
