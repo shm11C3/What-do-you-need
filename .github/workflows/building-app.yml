@@ -43,9 +43,8 @@ jobs:
         run: ENV_EXAMPLE_LINES=$(wc -l app/frontend/.env.example) >> $GITHUB_ENV
 
       - name: env verification
-        #if:  == "10 app/frontend/.env.example"
+        if: echo ${ env.ENV_EXAMPLE_LINES } == "10 app/frontend/.env.example"
         run : |
-          echo ${ env.ENV_EXAMPLE_LINES }
           exit 1
 
 #        if: cat app/frontend/.env.example | wc -l != cat app/frontend/.env | wc -l
