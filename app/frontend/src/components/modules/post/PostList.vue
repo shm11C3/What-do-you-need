@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-for="post in props.posts" :key="post">
+    <div v-for="(post, i) in props.posts" :key="post">
       <div class="rounded-lg bg-gray-50 border mt-4 shadow-lg">
         <button
           @click="toUser(post.username)"
@@ -12,20 +12,39 @@
               width="60"
               :src="post.profile_img_uri ?? store.getters.defaultUserUri"
             />
-            <div class="mt-2 ml-1">
+            <div class="flex-auto mt-2 ml-1">
               <p class="text-md">@{{ post.username }}</p>
               <p class="truncate text-lg">{{ post.name }}</p>
+            </div>
+            <div class="flex ml-auto mr-2">
+              <p class="mt-1 mr-2">
+                <span class="text-sm"> from </span>
+                <span class="text-lg">
+                  {{
+                    country_list.find((el) => el.code == posts[i].country_id)
+                      .label
+                  }}
+                </span>
+              </p>
+              <!--CSSに`scale()`を設定するとヘッダーを貫通するので今はこのままのサイズで-->
+              <!--TODO クソでかい国旗を縮小する-->
+              <country-flag
+                :country="
+                  country_code_list.find((el) => el.code == posts[i].country_id)
+                    .label
+                "
+                size="big"
+              />
             </div>
           </div>
         </button>
         <button
           v-on:click="toDetail(post.ulid)"
-          class="w-full text-left hover:bg-blue-50 pl-4"
+          class="w-full text-left hover:bg-blue-50 pl-4 pt-3 pb-8"
         >
           <p class="text-xl pt-4 font-bold border-b-2 border-gray-300">
             {{ post.title }}
           </p>
-          <p class="h-16 truncate">{{ post.content }}</p>
         </button>
       </div>
     </div>
@@ -42,9 +61,13 @@ import IntersectionObserver from "@/components/parts/IntersectionObserver.vue";
 import LoadingSpinner from "@/components/parts/LoadingSpinner.vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
+import CountryFlag from "vue-country-flag-next";
+import country from "@/js/consts/county";
 
 const router = useRouter();
 const store = useStore();
+
+const { country_code_list, country_list } = country();
 
 // eslint-disable-next-line no-undef
 const props = defineProps({
