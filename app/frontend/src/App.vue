@@ -40,7 +40,7 @@ const idTokenClaims = ref();
 
 store.dispatch(
   "setDefaultUserUri",
-  process.env.VUE_APP_ROOT_IMG + process.env.VUE_APP_DEFAULT_USER_IMG
+  process.env.VUE_APP_ROOT_IMG + process.env.VUE_APP_DEFAULT_USER_IMG_PATH
 );
 
 /**
