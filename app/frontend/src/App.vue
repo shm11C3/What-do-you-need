@@ -45,13 +45,18 @@ const idTokenClaims = ref();
  */
 const checkStatus = async () => {
   const { fetchRoot } = fetcher();
-  const response = await fetchRoot();
 
-  if (response.status >= 400) {
+  try {
+    const response = await fetchRoot();
+
+    if (response.status >= 400) {
+      router.push("/503");
+    } else if (route.path === "/503") {
+      // レスポンスが400未満で503ページにいる場合
+      router.push("/");
+    }
+  } catch (e) {
     router.push("/503");
-  } else if (route.path === "/503") {
-    // レスポンスが400未満で503ページにいる場合
-    router.push("/");
   }
 };
 
