@@ -99,6 +99,12 @@ const routes = [
     component: () => import("../views/error/NotFound.vue"),
     meta: { title: "Not Found", desc: "404 Not Found" },
   },
+  {
+    path: "/503",
+    name: "ServiceUnavailable",
+    component: () => import("../views/error/ServiceUnavailable.vue"),
+    meta: { title: "Service Unavailable", desc: "503 Service Unavailable" },
+  },
 ];
 
 const router = createRouter({
