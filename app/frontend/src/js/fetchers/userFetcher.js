@@ -4,7 +4,7 @@ import store from "@/store/index.js";
 
 export default function () {
   /**
-   * `user/profile` からユーザープロフィールを取得
+   * `/my-profile` からユーザープロフィールを取得
    *
    * @return {Promise}
    */
@@ -17,7 +17,7 @@ export default function () {
       }
 
       axios
-        .get("user/profile", {
+        .get("my-profile", {
           headers: {
             Authorization: `Bearer ${idToken}`,
           },
@@ -45,7 +45,7 @@ export default function () {
       }
 
       axios
-        .post("user/create", form_data, {
+        .post("user", form_data, {
           headers: {
             Authorization: `Bearer ${idToken}`,
           },
@@ -73,7 +73,7 @@ export default function () {
       }
 
       axios
-        .put("user/update", form_data, {
+        .put("user", form_data, {
           headers: {
             Authorization: `Bearer ${idToken}`,
           },
@@ -102,7 +102,7 @@ export default function () {
       }
 
       axios
-        .delete("user/delete", {
+        .delete("user", {
           headers: {
             Authorization: `Bearer ${idToken}`,
           },
@@ -120,7 +120,7 @@ export default function () {
   const fetchDuplicateUsername_exists = (request_username) => {
     return new Promise((resolve, reject) => {
       axios
-        .get(`/user/username/exists?username=${request_username}`)
+        .get(`/username/exists?username=${request_username}`)
         .then(function (response) {
           resolve(response.data);
         })
@@ -160,7 +160,7 @@ export default function () {
   };
 
   /**
-   * GET `/user/get/{username}`
+   * GET `/user/{username}`
    *
    * @param {string} username
    * @return {Promise}
@@ -175,7 +175,7 @@ export default function () {
 
     return new Promise((resolve, reject) => {
       axios
-        .get(`user/get/${username}`, {
+        .get(`user/${username}`, {
           headers: authorizationHeader,
         })
         .then((response) => {
