@@ -56,7 +56,7 @@
               v-model="username"
               @focus="usernameIsFocus = true"
               @blur="usernameIsFocus = false"
-              class="rounded-none rounded-r-lg border border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500 focus:shadow-outline outline-none block flex-1 min-w-0 w-full border-gray-300 p-2.5"
+              class="rounded-none rounded-r-lg border border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500 focus:shadow-outline outline-none block flex-1 min-w-0 w-full p-2.5"
               type="text"
               placeholder="Username..."
               autocomplete="off"
