@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="!store.getters.userProfile" class="lg:flex justify-center">
+    <div v-if="!userProfile" class="lg:flex justify-center">
       <div class="lg:w-6/12">
         <UserProfileForm @success="successRegister" :isRegister="true" />
       </div>
@@ -27,13 +27,15 @@ export default {
   setup() {
     const store = useStore();
 
+    const userProfile = store.getters.userProfile;
+
     const successRegister = () => {
       router.push("/user/profile");
     };
 
     return {
       successRegister,
-      store,
+      userProfile,
     };
   },
 };
