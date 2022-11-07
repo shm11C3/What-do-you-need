@@ -1,8 +1,13 @@
 name: Build Vue App
 
+env:
+  BRANCH: ${{ github.base_ref }}
+
 on:
   pull_request:
-    branches: [ "develop" ]
+      - master
+      - staging
+      - develop
   workflow_dispatch:
 
 jobs:
@@ -24,20 +29,13 @@ jobs:
           sudo chown -R runner app
 
       - name: Set env
+        environment:
+          name: ${{ env.BRANCH }}
         working-directory: ./app/frontend
         run: |
           touch .env
           sudo chmod 664 .env
-          echo "VUE_APP_NAME=${{ secrets.VUE_APP_NAME }}
-          VUE_APP_ROOT_API=${{ secrets.VUE_APP_ROOT_API }}
-          VUE_APP_HOSTNAME=${{ secrets.VUE_APP_HOSTNAME }}
-          VUE_APP_URL=${{ secrets.VUE_APP_URL }}
-          VUE_APP_REDIRECT_URL=${{ secrets.VUE_APP_REDIRECT_URL }}
-          VUE_APP_AUTH0_DOMAIN=${{ secrets.VUE_APP_AUTH0_DOMAIN }}
-          VUE_APP_AUTH0_CLIENT_ID=${{ secrets.VUE_APP_AUTH0_CLIENT_ID }}
-          VUE_APP_INQUIRY_SRC=${{ secrets.VUE_APP_INQUIRY_SRC }}
-          VUE_APP_ROOT_IMG=${{ secrets.VUE_APP_ROOT_IMG }}
-          VUE_APP_DEFAULT_USER_IMG_PATH=${{ secrets.VUE_APP_DEFAULT_USER_IMG_PATH }}" >> .env
+          echo "ENV=${{ secrets.ENV }}" >> .env
 
       - name: Building app
         run: |
