@@ -1,14 +1,14 @@
 name: Deploy Vue App
 
-env:
-  BRANCH: ${{ github.head_ref }}
-
 on:
   push:
     branches:
       - master
       - staging
   workflow_dispatch:
+
+env:
+  BRANCH: ${{ github.head_ref }}
 
 jobs:
   build:

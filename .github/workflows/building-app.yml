@@ -1,14 +1,14 @@
 name: Build Vue App
 
-env:
-  BRANCH: ${{ github.base_ref }}
-
 on:
   pull_request:
       - master
       - staging
       - develop
   workflow_dispatch:
+
+env:
+  BRANCH: ${{ github.base_ref }}
 
 jobs:
   build:
