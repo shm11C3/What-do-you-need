@@ -31,7 +31,7 @@ jobs:
 
       - name: Set env
         environment:
-          name: ${{ env.BRANCH }}
+          name: develop
         working-directory: ./app/frontend
         run: |
           touch .env
