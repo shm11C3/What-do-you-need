@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
 
     environment:
-      name: ${{ env.BRANCH }}
+      name: ${{ github.base_ref }}
 
     steps:
       - uses: actions/checkout@v3
