@@ -14,6 +14,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    environment:
+      name: ${{ env.BRANCH }}
+
     steps:
       - uses: actions/checkout@v3
 
@@ -29,8 +32,6 @@ jobs:
           sudo chown -R runner app
 
       - name: Set env
-        environment:
-          name: ${{ env.BRANCH }}
         working-directory: ./app/frontend
         run: |
           touch .env
