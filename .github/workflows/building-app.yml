@@ -2,6 +2,7 @@ name: Build Vue App
 
 on:
   pull_request:
+    branches:
       - master
       - staging
       - develop
