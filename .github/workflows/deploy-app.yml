@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     environment:
-      name: echo "${GITHUB_REF#refs/heads/}"
+      name: ${ GITHUB_REF#refs/heads/ }
 
     steps:
       - uses: actions/checkout@v3
