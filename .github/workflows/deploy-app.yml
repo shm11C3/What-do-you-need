@@ -47,6 +47,6 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
         run: |
-          aws s3 cp --recursive --region us-west-1 app/frontend/dist ${{ secrets.S3_DEV_APP_PATH }}
+          aws s3 cp --recursive --region us-west-1 app/frontend/dist ${{ secrets.S3_APP_PATH }}
           aws s3 cp --recursive --region us-west-1 --exclude '*' --include '*.env' app/frontend ${{ secrets.S3_APP_ENV_PATH }}
           aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
