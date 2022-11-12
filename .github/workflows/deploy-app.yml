@@ -12,13 +12,13 @@ jobs:
     runs-on: ubuntu-latest
 
     environment:
-      name: staging
+      name: "${GITHUB_REF#refs/heads/}"
 
     steps:
       - uses: actions/checkout@v3
 
       - name: Check Environment
-        run: echo "${{ github.head_ref }}"
+        run: echo "${GITHUB_REF#refs/heads/}"
 
       - name: Building docker
         run: docker-compose up -d --build
