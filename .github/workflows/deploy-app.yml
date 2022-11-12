@@ -17,6 +17,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Check Environment
+        run: ${{ github.head_ref }}
+
       - name: Building docker
         run: docker-compose up -d --build
 
