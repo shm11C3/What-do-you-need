@@ -4,7 +4,7 @@ import store from "@/store/index.js";
 
 export default function () {
   /**
-   * Post `/post/create`
+   * Post `/post`
    *
    * @returns Promise
    */
@@ -17,7 +17,7 @@ export default function () {
 
       axios
         .post(
-          "post/create",
+          "post",
           {
             title: store.getters.form_post.title,
             content: store.getters.form_post.content,
@@ -42,7 +42,7 @@ export default function () {
   };
 
   /**
-   * PUT `/post/update`
+   * PUT `/post`
    *
    * @return {Promise}
    */
@@ -55,7 +55,7 @@ export default function () {
 
       axios
         .put(
-          "post/update",
+          "post",
           {
             ulid: store.getters.form_post.ulid,
             title: store.getters.form_post.title,
@@ -189,7 +189,7 @@ export default function () {
   };
 
   /**
-   * DELETE `post/delete`
+   * DELETE `post`
    *
    * @param {string} ulid
    * @returns {Promise}
@@ -202,7 +202,7 @@ export default function () {
       }
 
       axios
-        .delete("post/delete", {
+        .delete("post", {
           headers: {
             Authorization: `Bearer ${idToken}`,
           },
@@ -221,7 +221,7 @@ export default function () {
   };
 
   /**
-   * GET `/{username}/posts`
+   * GET `/posts/{username}`
    *
    * @param {string} username
    * @param {int} page
@@ -237,7 +237,7 @@ export default function () {
 
     return new Promise((resolve, reject) => {
       axios
-        .get(`${username}/posts`, {
+        .get(`/posts/${username}`, {
           headers: authorizationHeader,
           params: {
             page: page,

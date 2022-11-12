@@ -23,8 +23,9 @@ import HeaderNav from "./components/HeaderNav.vue";
 import { useAuth0 } from "@auth0/auth0-vue";
 import { useStore } from "vuex";
 import { ref, watch } from "vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import userFetcher from "@/js/fetchers/userFetcher";
+import fetcher from "@/js/fetchers/fetcher";
 import LoadingSpinner from "./components/parts/LoadingSpinner.vue";
 import { useCookies } from "vue3-cookies";
 import BottomPostButton from "./components/BottomPostButton.vue";
@@ -33,14 +34,43 @@ import SetTitle from "./components/modules/utility/SetTitle.vue";
 const store = useStore();
 const auth0 = useAuth0();
 const router = useRouter();
+const route = useRoute();
 const { cookies } = useCookies();
 
 const isNearingExpirationIdToken = ref(false);
 const idTokenClaims = ref();
 
+/**
+ * Web APIの状態を監視する
+ */
+const checkStatus = async () => {
+  const { fetchRoot } = fetcher();
+
+  try {
+    const response = await fetchRoot();
+
+    if (response.status >= 400) {
+      router.push("/503");
+    } else if (route.path === "/503") {
+      // レスポンスが400未満で503ページにいる場合
+      router.push("/");
+    }
+  } catch (e) {
+    router.push("/503");
+  }
+};
+
+checkStatus();
+
+watch(route, (e) => {
+  if (e.path !== "/503") {
+    checkStatus();
+  }
+});
+
 store.dispatch(
   "setDefaultUserUri",
-  process.env.VUE_APP_ROOT_IMG + process.env.VUE_APP_DEFAULT_USER_IMG
+  process.env.VUE_APP_ROOT_IMG + process.env.VUE_APP_DEFAULT_USER_IMG_PATH
 );
 
 /**
