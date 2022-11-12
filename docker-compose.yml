@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  web:
+    container_name: app
+    build: ./infra/docker/vue
+    ports:
+      - 443:8083
+    privileged: true
+    volumes:
+      - ./app:/app
+    tty: true
+    stdin_open: true
+    command: /bin/sh
+    restart: always
+

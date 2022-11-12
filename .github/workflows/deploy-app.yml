@@ -1,0 +1,55 @@
+name: Deploy Vue App
+
+on:
+  push:
+    branches:
+      - master
+      - staging
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    environment:
+      name: ${{ github.ref_name }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Check Environment
+        run: echo ${{ github.ref_name }}
+
+      - name: Building docker
+        run: docker-compose up -d --build
+
+      - name: Install npm
+        run: |
+          mkdir app/frontend/node_modules
+          chmod 777 -R app/frontend/node_modules
+          chmod 777 app/frontend/package-lock.json
+          docker container exec -i app bash -c "cd frontend && npm install"
+          sudo chown -R runner app
+
+      - name: Set env
+        working-directory: ./app/frontend
+        run: |
+          touch .env
+          sudo chmod 664 .env
+          echo "ENV=${{ secrets.ENV }}" >> .env
+
+      - name: Building app
+        run: |
+          mkdir app/frontend/dist
+          chmod 777 -R app/frontend/dist
+          docker container exec -i app bash -c "cd frontend && npm run build"
+
+      - name: Deploy
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+        run: |
+          aws s3 cp --recursive --region us-west-1 app/frontend/dist ${{ secrets.S3_APP_PATH }}
+          aws s3 cp --recursive --region us-west-1 --exclude '*' --include '*.env' app/frontend ${{ secrets.S3_APP_ENV_PATH }}
+          aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"

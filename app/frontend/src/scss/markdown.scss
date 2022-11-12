@@ -1,0 +1,49 @@
+.md-container h1 {
+    font-size: 2.25rem;
+    line-height: 2.5rem;
+    font-weight: 700;
+    border-bottom-width: 2px;
+    border-color: inherit;
+    margin-top: 0.6em;
+    margin-bottom: 1.2rem;
+}
+.md-container h2 {
+    font-size: 1.875rem;
+    line-height: 2.25rem;
+    font-weight: 700;
+    margin-top: 0.5em;
+    margin-bottom: 1rem;
+}
+.md-container h3 {
+    font-size: 1.5rem;
+    line-height: 2rem;
+    font-weight: 700;
+    margin-top: 0.5em;
+    margin-bottom: 1rem;
+}
+.md-container code {
+    font-family: monospace;
+    background-color: rgba(0,0,0,.08);
+    color: #333;
+    padding: 0.1em 0.4em;
+}
+.md-container li {
+    list-style-type: disc;
+	margin-left: 24px;
+	text-align: left;
+}
+.md-container a {
+    color: #0891B2;
+}
+.md-container a:hover{
+    text-decoration: underline;
+}
+.md-container th {
+    padding: 10px;
+    background-color: rgb(171, 171, 171);
+}
+.md-container td {
+    padding: 5px;
+    border-color: rgb(171, 171, 171);
+    border-top-width: 1px;
+}
