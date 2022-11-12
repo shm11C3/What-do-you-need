@@ -12,10 +12,13 @@ jobs:
     runs-on: ubuntu-latest
 
     environment:
-      name: ${{ github.head_ref }}
+      name: ${{ github.ref_name }}
 
     steps:
       - uses: actions/checkout@v3
+
+      - name: Check Environment
+        run: echo ${{ github.ref_name }}
 
       - name: Building docker
         run: docker-compose up -d --build
