@@ -48,6 +48,29 @@
         </button>
       </div>
     </div>
+    <div v-show="!posts.length">
+      <div
+        class="text-blue-800 bg-indigo-100 text-xl px-4 py-3 rounded-3xl shadow mt-4"
+        role="alert"
+      >
+        <div>
+          <p class="font-bold text-4xl">Welcome!!</p>
+          <div class="mt-3">
+            <p class="block sm:inline">
+              Now, share with the world the help you need!
+            </p>
+          </div>
+        </div>
+        <div class="flex justify-end mt-5">
+          <router-link
+            to="/post/create"
+            class="text-blue-800 bg-transparent border-2 border-blue-800 hover:border-blue-500 text-center text-xl px-4 py-2 rounded-full shadow-xl"
+          >
+            Create a post
+          </router-link>
+        </div>
+      </div>
+    </div>
     <div>
       <IntersectionObserver @observed="addPosts" :disableObserver="isLoading" />
     </div>
