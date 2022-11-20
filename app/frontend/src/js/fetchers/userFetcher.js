@@ -35,6 +35,35 @@ export default function () {
     });
   };
 
+  /**
+   * Auth0のログイン中のアカウントデータを取得
+   *
+   * @returns {Promise}
+   */
+  const fetchAccountInfo = () => {
+    const idToken = store.getters.idToken;
+
+    return new Promise((resolve, reject) => {
+      if (!idToken) {
+        reject("ID Token is not registered.");
+      }
+
+      axios
+        .get("/auth/user", {
+          headers: {
+            Authorization: `Bearer ${idToken}`,
+          },
+        })
+        .then(function (response) {
+          resolve(response.data);
+        })
+        .catch(function (error) {
+          console.error(error);
+          reject(error);
+        });
+    });
+  };
+
   const postUserProfile = () => {
     const form_data = store.getters.form_userProfile;
     const idToken = store.getters.idToken;
@@ -217,8 +246,43 @@ export default function () {
     });
   };
 
+  /**
+   * MFAの設定変更をPOSTする
+   *
+   * @param {boolean} enableMfa MFAを有効にするかどうか
+   * @returns {Promise}
+   */
+  const postMfaConfig = (enableMfa) => {
+    const idToken = store.getters.idToken;
+
+    return new Promise((resolve, reject) => {
+      if (!idToken) {
+        reject("ID Token is not registered.");
+      }
+
+      axios
+        .post(
+          "/auth/config-mfa",
+          { mfa: enableMfa },
+          {
+            headers: {
+              Authorization: `Bearer ${idToken}`,
+            },
+          }
+        )
+        .then(function (response) {
+          resolve(response.data);
+        })
+        .catch(function (error) {
+          console.error(error);
+          reject(error);
+        });
+    });
+  };
+
   return {
     fetchUserProfile,
+    fetchAccountInfo,
     postUserProfile,
     updateUserProfile,
     deleteAccount,
@@ -226,5 +290,6 @@ export default function () {
     requestPasswordReset,
     fetchUserProfileByUsername,
     postResendVerificationEmailRequest,
+    postMfaConfig,
   };
 }
