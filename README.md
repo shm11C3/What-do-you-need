@@ -1,5 +1,7 @@
 # What do you need?
 
+[![Deploy Vue App](https://github.com/shm11C3/What-do-you-need/actions/workflows/deploy-app.yml/badge.svg?branch=master&event=check_run)](https://github.com/shm11C3/What-do-you-need/actions/workflows/deploy-app.yml)
+
 ## What software is this?
 **What do you need?** is a web application.
 When people around the world are faced with a problem, they can post what they need to solve it and share it with the world.
