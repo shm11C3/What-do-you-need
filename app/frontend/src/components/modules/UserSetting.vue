@@ -8,6 +8,29 @@
         <Logout class="mx-2"></Logout>
         <p class="text-xl">Logout</p>
       </button>
+      <button
+        class="flex items-center h-14 w-full hover:bg-gray-100 hover:text-blue-900"
+        @click="beginMfaConfig"
+      >
+        <TwoFactorAuthentication class="mx-2" />
+        <p class="text-xl">Multi Factor Auth</p>
+        <div class="ml-auto mr-2">
+          <div v-show="isLoading" class="flex justify-center">
+            <div class="animate-ping h-1 w-1 bg-blue-500 rounded-full"></div>
+            <div
+              class="animate-ping h-1 w-1 bg-blue-500 rounded-full mx-1"
+            ></div>
+            <div class="animate-ping h-1 w-1 bg-blue-500 rounded-full"></div>
+          </div>
+          <div v-show="!isLoading" class="flex items-center">
+            <span
+              :class="isEnabledMfa ? 'bg-teal-400' : 'bg-gray-300'"
+              class="p-1 h-1 w-1 rounded-full"
+            ></span>
+            <p class="ml-1">{{ isEnabledMfa ? "Enabled" : "Disabled" }}</p>
+          </div>
+        </div>
+      </button>
       <div v-show="!isSocialLogin">
         <router-link
           class="flex items-center h-14 w-full hover:bg-gray-100 hover:text-blue-900"
@@ -58,48 +81,83 @@
     </div>
   </div>
 </template>
-<script>
+<script setup>
+import { computed, ref, watch } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
+import { useAuth0 } from "@auth0/auth0-vue";
+import userFetcher from "@/js/fetchers/userFetcher";
 import Logout from "vue-material-design-icons/Logout.vue";
 import AccountKey from "vue-material-design-icons/AccountKey.vue";
 import AccountRemove from "vue-material-design-icons/AccountRemove.vue";
 import AccountClock from "vue-material-design-icons/AccountClock.vue";
+import TwoFactorAuthentication from "vue-material-design-icons/TwoFactorAuthentication.vue";
 
-export default {
-  components: {
-    Logout,
-    AccountKey,
-    AccountRemove,
-    AccountClock,
-  },
-  setup() {
-    const store = useStore();
-    const router = useRouter();
+const store = useStore();
+const router = useRouter();
+const auth0 = useAuth0();
 
-    let registrationDate;
-    const created_at = store.getters.userProfile.created_at;
-    const auth_type = store.getters.userProfile.auth_id.split("|")[0];
+const auth0UserInfo = ref();
+const isEnabledMfa = ref(false);
+const isLoading = ref(false);
 
-    const isSocialLogin = auth_type != "auth0";
+const { postMfaConfig, fetchAccountInfo } = userFetcher();
 
-    if (!created_at) {
-      registrationDate = "No Data";
-    } else {
-      registrationDate = created_at.split(" ")[0];
-    }
+let registrationDate;
+const created_at = store.getters.userProfile.created_at;
+const auth_type = store.getters.userProfile.auth_id.split("|")[0];
 
-    const logout = () => {
-      router.push("/logout");
-    };
+const isSocialLogin = auth_type != "auth0";
 
-    return {
-      registrationDate,
-      isSocialLogin,
-      logout,
-    };
-  },
+if (!created_at) {
+  registrationDate = "No Data";
+} else {
+  registrationDate = created_at.split(" ")[0];
+}
+
+const logout = () => {
+  router.push("/logout");
 };
+
+/**
+ * Auth0のログイン中のアカウントデータを取得し、値に代入
+ */
+const setAccountInfo = async () => {
+  auth0UserInfo.value = await fetchAccountInfo();
+  isEnabledMfa.value = auth0UserInfo.value.user_metadata.use_mfa;
+};
+
+/**
+ * MFAの設定を開始
+ */
+const beginMfaConfig = async () => {
+  isLoading.value = true;
+  const response = await postMfaConfig(!isEnabledMfa.value);
+
+  // 設定を有効にした場合
+  if (response.result) {
+    auth0.loginWithRedirect({
+      redirect_uri: process.env.VUE_APP_REDIRECT_URL + "login",
+    });
+  }
+
+  isEnabledMfa.value = response.result;
+  isLoading.value = false;
+};
+
+// ID Tokenがvuexに登録された段階でgetAccountInfoを呼び出す
+watch(
+  computed(() => {
+    return store.getters.idTokenClaims;
+  }),
+  () => {
+    setAccountInfo();
+  }
+);
+
+if (store.getters.idTokenClaims) {
+  setAccountInfo();
+}
 </script>
 <style>
 .leading-14 {
