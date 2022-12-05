@@ -25,14 +25,14 @@ jobs:
 
       - name: Install npm
         run: |
-          mkdir app/frontend/node_modules
-          chmod 777 -R app/frontend/node_modules
-          chmod 777 app/frontend/package-lock.json
-          docker container exec -i app bash -c "cd frontend && npm install"
+          mkdir app/node_modules
+          chmod 777 -R app/node_modules
+          chmod 777 app/package-lock.json
+          docker container exec -i app bash -c "npm install"
           sudo chown -R runner app
 
       - name: Set env
-        working-directory: ./app/frontend
+        working-directory: ./app
         run: |
           touch .env
           sudo chmod 664 .env
@@ -40,9 +40,9 @@ jobs:
 
       - name: Building app
         run: |
-          mkdir app/frontend/dist
-          chmod 777 -R app/frontend/dist
-          docker container exec -i app bash -c "cd frontend && npm run build"
+          mkdir app/dist
+          chmod 777 -R app/dist
+          docker container exec -i app bash -c "npm run build"
 
       - name: Deploy
         env:
@@ -50,6 +50,6 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
         run: |
-          aws s3 cp --recursive --region us-west-1 app/frontend/dist ${{ secrets.S3_APP_PATH }}
-          aws s3 cp --recursive --region us-west-1 --exclude '*' --include '*.env' app/frontend ${{ secrets.S3_APP_ENV_PATH }}
+          aws s3 cp --recursive --region us-west-1 app/dist ${{ secrets.S3_APP_PATH }}
+          aws s3 cp --recursive --region us-west-1 --exclude '*' --include '*.env' app ${{ secrets.S3_APP_ENV_PATH }}
           aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
