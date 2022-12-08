@@ -34,7 +34,33 @@ export default function () {
     });
   };
 
+  const removeReaction = (ulid) => {
+    return new Promise((resolve, reject) => {
+      if (!idToken) {
+        reject("ID Token is not registered.");
+      }
+
+      axios
+        .delete("reaction", {
+          headers: {
+            Authorization: `Bearer ${idToken}`,
+          },
+          data: {
+            ulid: ulid,
+          },
+        })
+        .then(function (response) {
+          resolve(response.data);
+        })
+        .catch(function (error) {
+          console.error(error);
+          reject(error);
+        });
+    });
+  };
+
   return {
     addReaction,
+    removeReaction,
   };
 }
