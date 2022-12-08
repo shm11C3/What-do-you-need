@@ -12,6 +12,7 @@ createApp(App)
       domain: process.env.VUE_APP_AUTH0_DOMAIN,
       client_id: process.env.VUE_APP_AUTH0_CLIENT_ID,
       redirect_uri: window.location.origin,
+      cacheLocation: "localstorage",
     })
   )
   .use(store)
