@@ -61,6 +61,11 @@
                     @click="sendReaction(i)"
                     class="px-1"
                     :disabled="isSendingReaction"
+                    :class="
+                      checkValueExists(post.usersReactions ?? [], i)
+                        ? 'bg-gray-200'
+                        : ''
+                    "
                   >
                     <span :class="reaction_type === '❤' ? 'text-red-500' : ''">
                       {{ reaction_type }}
@@ -80,13 +85,15 @@
                 @click="showReactionModal = !showReactionModal"
                 class="flex justify-center hover:bg-gray-200 py-2 w-full"
               >
-                <HeartPlusOutline />
+                <HeartPlusOutline v-show="!post.usersReactions" />
+                <Heart v-show="post.usersReactions" fillColor="red" />
+                <span>{{ post.totalReactionCount }}</span>
               </button>
             </div>
             <div class="relative group w-full">
               <span
                 class="whitespace-nowrap rounded bg-black px-2 py-1 text-white absolute -top-12 left-1/2 -translate-x-1/2 before:content-[''] before:absolute before:-translate-x-1/2 before:left-1/2 before:top-full before:border-4 before:border-transparent before:border-t-black opacity-0 group-hover:opacity-100 transition pointer-events-none"
-                >Share this post!</span
+                >Coming Soon!</span
               >
               <button class="flex justify-center hover:bg-gray-200 py-2 w-full">
                 <ShareVariant />
@@ -111,6 +118,7 @@ import LoadingSpinner from "@/components/parts/LoadingSpinner.vue";
 import VueMarkdownIt from "vue3-markdown-it";
 import NotFound from "../error/NotFound.vue";
 import HeartPlusOutline from "vue-material-design-icons/HeartPlusOutline.vue";
+import Heart from "vue-material-design-icons/Heart.vue";
 import CommentTextOutline from "vue-material-design-icons/CommentTextOutline.vue";
 import ShareVariant from "vue-material-design-icons/ShareVariant.vue";
 import reactionType from "@/js/consts/reactionType";
@@ -153,11 +161,58 @@ const sendReaction = async (reaction_type) => {
   isSendingReaction.value = true;
   showReactionModal.value = false;
 
-  const { addReaction } = reactionFetcher();
+  const { addReaction, removeReaction } = reactionFetcher();
 
-  const response = await addReaction(post.value.ulid, reaction_type);
+  const old_post = JSON.parse(JSON.stringify(post.value)); // post.valueをデータ更新前に値渡しさせる
 
-  console.log(response);
+  let response = [];
+  if (checkValueExists(post.value.usersReactions, reaction_type)) {
+    // リアクション解除
+
+    // 楽観的更新
+    post.value.totalReactionCount--;
+    post.value.usersReactions[
+      Object.keys(post.value.usersReactions).find(
+        (key) => post.value.usersReactions[key] === reaction_type
+      )
+    ] = null;
+    post.value.countByReactionType[reaction_type]--;
+
+    // APIに送信
+    try {
+      const target_reaction = post.value.reactions.find(
+        (e) =>
+          e.reaction_type === reaction_type &&
+          e.auth_id === store.getters.auth_id
+      );
+      response = await removeReaction(target_reaction.ulid);
+    } catch (e) {
+      response.status = false;
+      isSendingReaction.value = false;
+    }
+  } else {
+    // リアクション付与
+
+    // 楽観的更新
+    post.value.totalReactionCount++;
+    post.value.usersReactions[Object.keys(post.value.usersReactions).length] =
+      reaction_type;
+    post.value.countByReactionType[reaction_type]++;
+
+    // APIに送信
+    try {
+      response = await addReaction(post.value.ulid, reaction_type);
+    } catch (e) {
+      response.status = false;
+      isSendingReaction.value = false;
+    }
+  }
+
+  // エラー時に楽観的更新を切り戻す
+  if (!response.status) {
+    post.value = old_post;
+  }
+
   isSendingReaction.value = false;
 };
 
@@ -202,6 +257,10 @@ const getPost = async () => {
   }
 
   isLoading.value = false;
+};
+
+const checkValueExists = (obj, value) => {
+  return Object.values(obj).includes(value);
 };
 
 initial();
