@@ -44,6 +44,14 @@
             />
           </div>
         </div>
+        <div class="flex flex-row-reverse">
+          <div>
+            <label class="mr-2 text-lg text-gray-700"
+              >Have you finished verifying your Email?</label
+            >
+            <EmailVerifiedButton @click="emailVerified" />
+          </div>
+        </div>
       </div>
     </section>
   </div>
@@ -57,11 +65,13 @@ import { watch } from "vue";
 import userFetcher from "@/js/fetchers/userFetcher";
 import AlertIndicate from "@/components/parts/AlertIndicate.vue";
 import LoadingSpinner from "@/components/parts/LoadingSpinner.vue";
+import EmailVerifiedButton from "@/components/parts/buttons/EmailVerifiedButton.vue";
 
 export default {
   components: {
     AlertIndicate,
     LoadingSpinner,
+    EmailVerifiedButton,
   },
 
   setup() {
@@ -92,6 +102,15 @@ export default {
       isProcessingSendEmail.value = false;
     };
 
+    /**
+     * Email検証完了後にボタン押下でユーザー情報を再取得
+     */
+    const emailVerified = () => {
+      auth0.loginWithRedirect({
+        redirect_uri: process.env.VUE_APP_REDIRECT_URL + "login",
+      });
+    };
+
     return {
       isLoading: auth0.isLoading,
       cssSetting: setting,
@@ -99,6 +118,7 @@ export default {
       isProcessingSendEmail,
       isSuccessSendEmail,
       resendVerificationEmail,
+      emailVerified,
     };
   },
   computed: {
