@@ -85,10 +85,11 @@
             >
               Preview
             </button>
-            <button class="flex items-center ml-auto">
+            <!--<button class="flex items-center ml-auto">
               Styling with markdowns is also supported
               <HelpCircleOutline :size="18" class="ml-1" />
-            </button>
+            </button>-->
+            <PostImage class="flex items-center ml-auto" />
           </div>
           <div
             class="w-full bg-gray-50 rounded-lg border border-gray-200 dark:bg-gray-700 dark:border-gray-600"
@@ -243,7 +244,8 @@ import LoadingSpinner from "@/components/parts/LoadingSpinner.vue";
 import PopUpModal from "@/components/parts/PopUpModal.vue";
 import IntersectionObserver from "@/components/parts/IntersectionObserver.vue";
 import VueMarkdownIt from "vue3-markdown-it";
-import HelpCircleOutline from "vue-material-design-icons/HelpCircleOutline.vue";
+// import HelpCircleOutline from "vue-material-design-icons/HelpCircleOutline.vue";
+import PostImage from "./PostImage.vue";
 
 // eslint-disable-next-line no-undef
 const emit = defineEmits(["success"]);
