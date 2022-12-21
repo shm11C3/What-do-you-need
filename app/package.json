@@ -13,6 +13,7 @@
     "@auth0/auth0-spa-js": "^1.22.1",
     "@auth0/auth0-vue": "^1.0.2",
     "axios": "^0.27.2",
+    "compressorjs": "^1.1.1",
     "core-js": "^3.8.3",
     "graphemesplit": "^2.4.4",
     "rm": "^0.1.8",

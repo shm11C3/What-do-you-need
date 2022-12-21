@@ -45,6 +45,11 @@
           <p class="text-xl pt-4 font-bold border-b-2 border-gray-300">
             {{ post.title }}
           </p>
+          <PostImages
+            :images="post.images"
+            :enableShowDetail="false"
+            class="mt-4"
+          />
         </button>
       </div>
     </div>
@@ -86,6 +91,7 @@ import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import CountryFlag from "vue-country-flag-next";
 import country from "@/js/consts/county";
+import PostImages from "@/components/templates/PostImages.vue";
 
 const router = useRouter();
 const store = useStore();
