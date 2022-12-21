@@ -70,6 +70,11 @@
               <p class="text-red-600">{{ error }}</p>
             </div>
           </div>
+          <PostImages
+            @deleteImage="deleteImage"
+            :images="uploadedImages"
+            :enableShowDetail="false"
+          />
           <div class="flex">
             <button
               class="rounded-t-lg py-2 w-16 text-gray-800 ml-2"
@@ -85,10 +90,14 @@
             >
               Preview
             </button>
-            <button class="flex items-center ml-auto">
+            <!--<button class="flex items-center ml-auto">
               Styling with markdowns is also supported
               <HelpCircleOutline :size="18" class="ml-1" />
-            </button>
+            </button>-->
+            <PostImage
+              @pushUploadedImage="pushUploadedImage"
+              class="flex items-center ml-auto"
+            />
           </div>
           <div
             class="w-full bg-gray-50 rounded-lg border border-gray-200 dark:bg-gray-700 dark:border-gray-600"
@@ -243,7 +252,10 @@ import LoadingSpinner from "@/components/parts/LoadingSpinner.vue";
 import PopUpModal from "@/components/parts/PopUpModal.vue";
 import IntersectionObserver from "@/components/parts/IntersectionObserver.vue";
 import VueMarkdownIt from "vue3-markdown-it";
-import HelpCircleOutline from "vue-material-design-icons/HelpCircleOutline.vue";
+// import HelpCircleOutline from "vue-material-design-icons/HelpCircleOutline.vue";
+import PostImage from "./PostImage.vue";
+import PostImages from "@/components/templates/PostImages.vue";
+import postImageFetcher from "@/js/fetchers/postImageFetcher";
 
 // eslint-disable-next-line no-undef
 const emit = defineEmits(["success"]);
@@ -267,6 +279,8 @@ const height = ref();
 const area = ref(null);
 const preview = ref(false);
 
+const uploadedImages = ref([]);
+
 const isLoading = ref(false);
 const errors = ref([]);
 const showCancelConfirm = ref(false);
@@ -282,6 +296,10 @@ onMounted(() => {
     registerFormValue();
   }
 });
+
+const pushUploadedImage = (result) => {
+  uploadedImages.value.push(result);
+};
 
 /**
  * set value from cookie
@@ -526,6 +544,7 @@ const cancel = () => {
 
   store.dispatch("setForm_post", null);
   cookies.remove("post_form");
+  cookies.remove("post_form_image");
 
   router.push(router.referrer);
 };
@@ -577,6 +596,20 @@ const deletePost = (i) => {
 
   draft_list.value.splice(i, 1);
   deleteDraftConfirm.value = false;
+};
+
+const deleteImage = async (uuid) => {
+  const { deleteImage } = postImageFetcher();
+
+  const old_images = JSON.parse(JSON.stringify(uploadedImages.value));
+
+  uploadedImages.value = uploadedImages.value.filter((e) => e.uuid !== uuid);
+
+  try {
+    await deleteImage(uuid);
+  } catch (e) {
+    uploadedImages.value = old_images;
+  }
 };
 
 getCategories();

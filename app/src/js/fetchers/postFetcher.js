@@ -24,6 +24,7 @@ export default function () {
             category_uuid: store.getters.form_post.category_uuid,
             is_draft: store.getters.form_post.is_draft,
             is_publish: store.getters.form_post.is_publish,
+            image_group_uuid: store.getters.form_post.image_group_uuid,
           },
           {
             headers: {
@@ -63,6 +64,7 @@ export default function () {
             category_uuid: store.getters.form_post.category_uuid,
             is_draft: store.getters.form_post.is_draft,
             is_publish: store.getters.form_post.is_publish,
+            image_group_uuid: store.getters.form_post.image_group_uuid,
           },
           {
             headers: {
