@@ -34,7 +34,39 @@ export default function () {
     });
   };
 
+  /**
+   * DELETE `post/image`
+   *
+   * @param {string} ulid
+   * @returns {Promise}
+   */
+  const deleteImage = (uuid) => {
+    return new Promise((resolve, reject) => {
+      if (!idToken) {
+        reject("ID Token is not registered.");
+      }
+
+      axios
+        .delete("/post/image", {
+          headers: {
+            Authorization: `Bearer ${idToken}`,
+          },
+          data: {
+            uuid: uuid,
+          },
+        })
+        .then(function (response) {
+          resolve(response.data);
+        })
+        .catch(function (error) {
+          console.error(error);
+          reject(error);
+        });
+    });
+  };
+
   return {
     uploadPostImage,
+    deleteImage,
   };
 }

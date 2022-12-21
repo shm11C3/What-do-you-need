@@ -70,7 +70,11 @@
               <p class="text-red-600">{{ error }}</p>
             </div>
           </div>
-          <PostImages :images="uploadedImages" :enableShowDetail="false" />
+          <PostImages
+            @deleteImage="deleteImage"
+            :images="uploadedImages"
+            :enableShowDetail="false"
+          />
           <div class="flex">
             <button
               class="rounded-t-lg py-2 w-16 text-gray-800 ml-2"
@@ -251,6 +255,7 @@ import VueMarkdownIt from "vue3-markdown-it";
 // import HelpCircleOutline from "vue-material-design-icons/HelpCircleOutline.vue";
 import PostImage from "./PostImage.vue";
 import PostImages from "@/components/templates/PostImages.vue";
+import postImageFetcher from "@/js/fetchers/postImageFetcher";
 
 // eslint-disable-next-line no-undef
 const emit = defineEmits(["success"]);
@@ -591,6 +596,20 @@ const deletePost = (i) => {
 
   draft_list.value.splice(i, 1);
   deleteDraftConfirm.value = false;
+};
+
+const deleteImage = async (uuid) => {
+  const { deleteImage } = postImageFetcher();
+
+  const old_images = JSON.parse(JSON.stringify(uploadedImages.value));
+
+  uploadedImages.value = uploadedImages.value.filter((e) => e.uuid !== uuid);
+
+  try {
+    await deleteImage(uuid);
+  } catch (e) {
+    uploadedImages.value = old_images;
+  }
 };
 
 getCategories();
