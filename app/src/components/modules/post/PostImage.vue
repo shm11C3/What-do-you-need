@@ -1,9 +1,11 @@
 <template>
   <label>
     <UploadImageButton
-      :isDisable="disableImageButton || preview.length >= 4"
+      v-show="!isLoading"
+      :isDisable="disableImageButton || imageCount >= 4"
       @selectImage="selectImage"
     />
+    <LoadingSpinner v-show="isLoading" />
   </label>
 </template>
 <script setup>
@@ -13,6 +15,10 @@ import Compressor from "compressorjs";
 import postImageFetcher from "@/js/fetchers/postImageFetcher";
 import { useStore } from "vuex";
 import { useCookies } from "vue3-cookies";
+import LoadingSpinner from "@/components/parts/LoadingSpinner.vue";
+
+// eslint-disable-next-line no-undef
+const emit = defineEmits(["pushUploadedImage"]);
 
 onMounted(() => {
   if (cookies.isKey("post_form_image")) {
@@ -34,7 +40,8 @@ const compressionParam = {
 };
 
 const disableImageButton = ref(false);
-const preview = ref([]);
+const imageCount = ref(0);
+const isLoading = ref(false);
 
 /**
  * ファイル選択時
@@ -44,11 +51,7 @@ const preview = ref([]);
 const selectImage = (file) => {
   if (file === null) return;
 
-  disableImageButton.value = true;
-
   sendFile(file);
-
-  disableImageButton.value = false;
 };
 
 /**
@@ -58,6 +61,7 @@ const selectImage = (file) => {
  */
 const sendFile = async (file) => {
   const { uploadPostImage } = postImageFetcher();
+  disableImageButton.value = isLoading.value = true;
 
   const payload = {
     quality: compressionParam.quality,
@@ -66,9 +70,9 @@ const sendFile = async (file) => {
     mimeType: compressionParam.mimeType,
     async success(blob) {
       // DataURL(プレビュー用)を生成
-      blobToDataURL(blob, (dataUrl) => {
-        preview.value.push(dataUrl);
-      });
+      //blobToDataURL(blob, (dataUrl) => {
+      //  preview.value.push(dataUrl);
+      //});
 
       // FormDataを作成し、画像データを格納
       const data = new FormData();
@@ -83,11 +87,18 @@ const sendFile = async (file) => {
 
       const result = await uploadPostImage(data);
 
+      emit("pushUploadedImage", result);
+
+      imageCount.value++;
+
       store.dispatch("setImageGroupUuid", result.image_group_uuid);
       cookies.set("post_form_image", result.image_group_uuid, null, "/post");
+
+      disableImageButton.value = isLoading.value = false;
     },
     error(err) {
-      console.log(err.message);
+      console.error(err.message);
+      disableImageButton.value = isLoading.value = false;
     },
   };
 
@@ -101,11 +112,11 @@ const sendFile = async (file) => {
  * @param {*} blob
  * @param {*} callback
  */
-const blobToDataURL = (blob, callback) => {
-  const fr = new FileReader();
-  fr.onload = function (e) {
-    callback(e.target.result);
-  };
-  fr.readAsDataURL(blob);
-};
+//const blobToDataURL = (blob, callback) => {
+//  const fr = new FileReader();
+//  fr.onload = function (e) {
+//    callback(e.target.result);
+//  };
+//  fr.readAsDataURL(blob);
+//};
 </script>

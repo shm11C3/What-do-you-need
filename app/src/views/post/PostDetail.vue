@@ -27,6 +27,12 @@
             <p class="text-xl pt-4 font-bold border-b-2 border-gray-300">
               {{ post.title }}
             </p>
+            <postImages
+              :images="post.images"
+              :enableShowDetail="true"
+              @activeModal="activeModal"
+              class="mt-4"
+            />
             <vue-markdown-it class="md-container my-6" :source="post.content" />
           </div>
           <div class="flex flex-auto w-full">
@@ -42,7 +48,11 @@
                 <CommentTextOutline />
               </button>
             </div>
-            <div ref="reactionModal" class="relative group w-full">
+            <div
+              v-show="!hideBottomButtons"
+              ref="reactionModal"
+              class="relative group w-full"
+            >
               <span
                 class="whitespace-nowrap rounded bg-black px-2 py-1 text-white absolute -top-12 left-1/2 -translate-x-1/2 before:content-[''] before:absolute before:-translate-x-1/2 before:left-1/2 before:top-full before:border-4 before:border-transparent before:border-t-black opacity-0 group-hover:opacity-100 transition pointer-events-none"
                 >React to this post!</span
@@ -122,6 +132,7 @@ import Heart from "vue-material-design-icons/Heart.vue";
 import CommentTextOutline from "vue-material-design-icons/CommentTextOutline.vue";
 import ShareVariant from "vue-material-design-icons/ShareVariant.vue";
 import reactionType from "@/js/consts/reactionType";
+import PostImages from "@/components/templates/PostImages.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -134,6 +145,8 @@ const showReactionModal = ref(false);
 const reactionModal = ref(null);
 const isSendingReaction = ref(false);
 
+const hideBottomButtons = ref(false); // ボタンがモーダルを貫通してくるので暫定対策で隠す
+
 const { reaction_types } = reactionType();
 
 const store = useStore();
@@ -145,6 +158,10 @@ onMounted(() => {
 onBeforeUnmount(() => {
   removeEventListener("click", onClickOutside);
 });
+
+const activeModal = (status) => {
+  hideBottomButtons.value = status;
+};
 
 /**
  * リアクションモーダルを閉じる

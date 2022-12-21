@@ -70,6 +70,7 @@
               <p class="text-red-600">{{ error }}</p>
             </div>
           </div>
+          <PostImages :images="uploadedImages" :enableShowDetail="false" />
           <div class="flex">
             <button
               class="rounded-t-lg py-2 w-16 text-gray-800 ml-2"
@@ -89,7 +90,10 @@
               Styling with markdowns is also supported
               <HelpCircleOutline :size="18" class="ml-1" />
             </button>-->
-            <PostImage class="flex items-center ml-auto" />
+            <PostImage
+              @pushUploadedImage="pushUploadedImage"
+              class="flex items-center ml-auto"
+            />
           </div>
           <div
             class="w-full bg-gray-50 rounded-lg border border-gray-200 dark:bg-gray-700 dark:border-gray-600"
@@ -246,6 +250,7 @@ import IntersectionObserver from "@/components/parts/IntersectionObserver.vue";
 import VueMarkdownIt from "vue3-markdown-it";
 // import HelpCircleOutline from "vue-material-design-icons/HelpCircleOutline.vue";
 import PostImage from "./PostImage.vue";
+import PostImages from "@/components/templates/PostImages.vue";
 
 // eslint-disable-next-line no-undef
 const emit = defineEmits(["success"]);
@@ -269,6 +274,8 @@ const height = ref();
 const area = ref(null);
 const preview = ref(false);
 
+const uploadedImages = ref([]);
+
 const isLoading = ref(false);
 const errors = ref([]);
 const showCancelConfirm = ref(false);
@@ -284,6 +291,10 @@ onMounted(() => {
     registerFormValue();
   }
 });
+
+const pushUploadedImage = (result) => {
+  uploadedImages.value.push(result);
+};
 
 /**
  * set value from cookie
