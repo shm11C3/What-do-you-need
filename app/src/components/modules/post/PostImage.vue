@@ -7,10 +7,21 @@
   </label>
 </template>
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import UploadImageButton from "@/components/parts/buttons/UploadImageButton.vue";
 import Compressor from "compressorjs";
 import postImageFetcher from "@/js/fetchers/postImageFetcher";
+import { useStore } from "vuex";
+import { useCookies } from "vue3-cookies";
+
+onMounted(() => {
+  if (cookies.isKey("post_form_image")) {
+    store.dispatch("setImageGroupUuid", cookies.get("post_form_image"));
+  }
+});
+
+const store = useStore();
+const { cookies } = useCookies();
 
 /**
  * 写真圧縮時のパラメータ
@@ -45,7 +56,7 @@ const selectImage = (file) => {
  *
  * @param {*} file
  */
-const sendFile = (file) => {
+const sendFile = async (file) => {
   const { uploadPostImage } = postImageFetcher();
 
   const payload = {
@@ -53,7 +64,7 @@ const sendFile = (file) => {
     maxWidth: compressionParam.maxWidth,
     maxHeight: compressionParam.maxHeight,
     mimeType: compressionParam.mimeType,
-    success(blob) {
+    async success(blob) {
       // DataURL(プレビュー用)を生成
       blobToDataURL(blob, (dataUrl) => {
         preview.value.push(dataUrl);
@@ -63,7 +74,10 @@ const sendFile = (file) => {
       const data = new FormData();
       data.append("image", blob, "image.jpeg");
 
-      uploadPostImage(data);
+      const result = await uploadPostImage(data);
+
+      store.dispatch("setImageGroupUuid", result.image_group_uuid);
+      cookies.set("post_form_image", result.image_group_uuid, null, "/post");
     },
     error(err) {
       console.log(err.message);

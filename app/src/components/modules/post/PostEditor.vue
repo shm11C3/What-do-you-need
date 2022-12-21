@@ -528,6 +528,7 @@ const cancel = () => {
 
   store.dispatch("setForm_post", null);
   cookies.remove("post_form");
+  cookies.remove("post_form_image");
 
   router.push(router.referrer);
 };
