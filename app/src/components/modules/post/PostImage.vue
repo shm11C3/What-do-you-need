@@ -74,6 +74,13 @@ const sendFile = async (file) => {
       const data = new FormData();
       data.append("image", blob, "image.jpeg");
 
+      const image_group_uuid = store.getters.form_post.image_group_uuid ?? null;
+
+      // image_group_uuidが存在する場合はformDataに追加
+      if (image_group_uuid) {
+        data.append("image_group_uuid", image_group_uuid);
+      }
+
       const result = await uploadPostImage(data);
 
       store.dispatch("setImageGroupUuid", result.image_group_uuid);
