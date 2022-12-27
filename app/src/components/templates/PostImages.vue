@@ -2,7 +2,6 @@
   <div class="flex flex-wrap">
     <div
       :class="props.images.length > 1 ? 'w-1/2' : 'w-full'"
-      class="relative"
       v-for="(image, i) in props.images"
       :key="image"
     >
