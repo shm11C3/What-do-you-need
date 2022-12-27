@@ -35,7 +35,7 @@ import Close from "vue-material-design-icons/Close.vue";
 // eslint-disable-next-line no-undef
 const props = defineProps({
   enableShowDetail: Boolean,
-  enableDelete: { type: Boolean, default: true },
+  enableDelete: { type: Boolean, default: false },
   images: Object,
 });
 
