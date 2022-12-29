@@ -39,6 +39,9 @@ const auth = {
     defaultUserUri(state) {
       return state.defaultUserUri;
     },
+    username(state) {
+      return state.userProfile.username ?? null;
+    },
   },
   mutations: {
     isLoading(state, e) {

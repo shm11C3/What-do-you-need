@@ -2,6 +2,12 @@
   <div>
     <div v-for="(post, i) in props.posts" :key="post">
       <div class="rounded-lg bg-gray-50 border mt-4 shadow-lg">
+        <div
+          v-show="store.getters.username === post.username"
+          class="flex flex-row-reverse mx-2"
+        >
+          <PostOptionMenuButton @delete="deletePost(i)" />
+        </div>
         <button
           @click="toUser(post.username)"
           class="w-full text-left hover:bg-blue-50 pl-4"
@@ -53,7 +59,7 @@
         </button>
       </div>
     </div>
-    <div v-show="!posts.length">
+    <div v-show="!posts.length && !isLoading">
       <div
         class="text-blue-800 bg-indigo-100 text-xl px-4 py-3 rounded-3xl shadow mt-4"
         role="alert"
@@ -79,12 +85,13 @@
     <div>
       <IntersectionObserver @observed="addPosts" :disableObserver="isLoading" />
     </div>
-    <div v-show="isLoading">
+    <div v-show="isLoading || isDeleting">
       <LoadingSpinner :size="28" class="mt-4" />
     </div>
   </div>
 </template>
 <script setup>
+import { ref } from "vue";
 import IntersectionObserver from "@/components/parts/IntersectionObserver.vue";
 import LoadingSpinner from "@/components/parts/LoadingSpinner.vue";
 import { useRouter } from "vue-router";
@@ -92,6 +99,8 @@ import { useStore } from "vuex";
 import CountryFlag from "vue-country-flag-next";
 import country from "@/js/consts/county";
 import PostImages from "@/components/templates/PostImages.vue";
+import PostOptionMenuButton from "@/components/parts/buttons/PostOptionMenuButton.vue";
+import postFetcher from "@/js/fetchers/postFetcher";
 
 const router = useRouter();
 const store = useStore();
@@ -103,6 +112,8 @@ const props = defineProps({
   posts: { type: Object },
   isLoading: { type: Boolean, default: false },
 });
+
+const isDeleting = ref(false);
 
 // eslint-disable-next-line no-undef
 const emit = defineEmits(["addPosts"]);
@@ -117,5 +128,25 @@ const toDetail = (ulid) => {
 
 const toUser = (username) => {
   router.push(`/user/detail/${username}`);
+};
+
+/**
+ * 投稿を削除する
+ *
+ * @param {integer} i
+ */
+const deletePost = async (i) => {
+  isDeleting.value = true;
+  const { deletePost } = postFetcher();
+
+  const result = await deletePost(props.posts[i].ulid);
+
+  isDeleting.value = false;
+
+  // props / emitで受け渡している都合上、動的な更新をこのコンポーネントで実装するのはコストがかかるため、簡易的にロード処理を入れることで対処
+  // [TODO]クソ実装を改め動的な更新を実装する
+  if (result.status) {
+    router.go({ path: router.currentRoute.path, force: true });
+  }
 };
 </script>

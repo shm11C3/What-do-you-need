@@ -61,7 +61,7 @@
             data-modal-toggle="popup-modal"
             type="button"
             class="text-white focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 focus:z-10"
-            :class="`bg-${negativeColor}-500 hover:bg-${negativeColor}-700 focus:ring-${props.negativeColor}-300`"
+            :class="`bg-${props.negativeColor}-500 hover:bg-${props.negativeColor}-700 focus:ring-${props.negativeColor}-300`"
           >
             {{ props.negativeMessage }}
           </button>
