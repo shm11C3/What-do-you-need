@@ -95,8 +95,8 @@
                 @click="showReactionModal = !showReactionModal"
                 class="flex justify-center hover:bg-gray-200 py-2 w-full"
               >
-                <HeartPlusOutline v-show="!post.usersReactions" />
-                <Heart v-show="post.usersReactions" fillColor="red" />
+                <HeartPlusOutline v-show="!isUserAddedReaction" />
+                <Heart v-show="isUserAddedReaction" fillColor="red" />
                 <span>{{ post.totalReactionCount }}</span>
               </button>
             </div>
@@ -146,6 +146,10 @@ const reactionModal = ref(null);
 const isSendingReaction = ref(false);
 
 const hideBottomButtons = ref(false); // ボタンがモーダルを貫通してくるので暫定対策で隠す
+
+const isUserAddedReaction = computed(() => {
+  return Object.values(post.value.usersReactions ?? []).length;
+});
 
 const { reaction_types } = reactionType();
 
