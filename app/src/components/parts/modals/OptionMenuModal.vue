@@ -3,10 +3,10 @@
     <div
       class="absolute flex flex-col w-48 top-0 right-0 bg-white shadow-sm rounded-xl py-5"
     >
-      <button class="flex hover:bg-gray-100 px-4 py-1">
+      <!--<button class="flex hover:bg-gray-100 px-4 py-1">
         <PencilBox />
         Edit Post
-      </button>
+      </button>-->
       <button
         @click="showDeleteModal"
         class="flex text-red-500 hover:bg-gray-100 px-4 py-1"
@@ -31,7 +31,7 @@
 </template>
 <script setup>
 import { ref } from "vue";
-import PencilBox from "vue-material-design-icons/PencilBox.vue";
+//import PencilBox from "vue-material-design-icons/PencilBox.vue";
 import Delete from "vue-material-design-icons/Delete.vue";
 import PopUpModal from "../PopUpModal.vue";
 
