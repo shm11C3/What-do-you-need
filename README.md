@@ -1,6 +1,6 @@
 # What do you need?
 
-[![Deploy Vue App](https://github.com/shm11C3/What-do-you-need/actions/workflows/deploy-app.yml/badge.svg?branch=master&event=check_run)](https://github.com/shm11C3/What-do-you-need/actions/workflows/deploy-app.yml)
+https://wt-you-need.com
 
 ## What software is this?
 **What do you need?** is a web application.
