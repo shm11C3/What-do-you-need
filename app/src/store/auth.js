@@ -40,6 +40,7 @@ const auth = {
       return state.defaultUserUri;
     },
     username(state) {
+      if (!state.userProfile) return null;
       return state.userProfile.username ?? null;
     },
   },
